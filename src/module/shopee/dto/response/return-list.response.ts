@@ -8,15 +8,6 @@ export interface ShopeeReturnItem {
   update_time: number;
 }
 
-// export interface ShopeeResponseGetReturnList {
-//   response: {
-//     return_list: ShopeeReturnItem[];
-//     more: boolean;
-//   };
-//   error?: string;
-//   message?: string;
-// }
-
 export interface ShopeeResponseGetReturnList {
   response: {
     more: boolean;
