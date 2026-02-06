@@ -105,3 +105,38 @@ export async function getBookingTrackingNumber(
 
   return ShopeeHelper.httpGet(url, config);
 }
+
+/**
+ *
+ * @param orderNumber - Order serial number.
+ * @param config - Shopee API configuration.
+ * @returns {Promise<ShopeeResponseTrackingNumber>}
+ */
+export async function getTrackingNumber(
+  orderNumber: string,
+  config: ShopeeConfig,
+): Promise<any> {
+  const timestamp = ShopeeHelper.getTimestampNow();
+  const signature = ShopeeHelper.signRequest(
+    SHOPEE_PATH.GET_TRACKING_NUMBER,
+    config,
+    timestamp,
+  );
+
+  const additionalParams = {
+    order_sn: orderNumber.trim(),
+    response_optional_fields: 'first_mile_tracking_number',
+  };
+
+  const commonParam = ShopeeHelper.buildCommonParams(
+    config,
+    signature,
+    timestamp,
+    additionalParams,
+  );
+
+  const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.GET_TRACKING_NUMBER}${commonParam}`;
+
+  return ShopeeHelper.httpGet(url, config);
+}
+
