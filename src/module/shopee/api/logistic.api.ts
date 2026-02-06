@@ -72,3 +72,36 @@ export async function shipOrder(
 
   return ShopeeHelper.httpPost(url, body, config);
 }
+
+/**
+ *
+ * @param bookingSn - Booking serial number.
+ * @param config - Shopee API configuration.
+ * @returns {Promise<any>}
+ */
+export async function getBookingTrackingNumber(
+  bookingSn: string,
+  config: ShopeeConfig,
+): Promise<any> {
+  const timestamp = ShopeeHelper.getTimestampNow();
+  const signature = ShopeeHelper.signRequest(
+    SHOPEE_PATH.GET_BOOKING_TRACKING_NUMBER,
+    config,
+    timestamp,
+  );
+
+  const additionalParams = {
+    booking_sn: bookingSn,
+  };
+
+  const commonParam = ShopeeHelper.buildCommonParams(
+    config,
+    signature,
+    timestamp,
+    additionalParams,
+  );
+
+  const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.GET_BOOKING_TRACKING_NUMBER}${commonParam}`;
+
+  return ShopeeHelper.httpGet(url, config);
+}
