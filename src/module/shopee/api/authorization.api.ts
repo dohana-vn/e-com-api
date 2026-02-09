@@ -102,18 +102,3 @@ export async function getShopProfile(config: ShopeeConfig): Promise<ShopeeRespon
   const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.GET_PROFILE}${commonParam}`;
   return ShopeeHelper.httpGet(url, config);
 }
-
-export function verifyShopeeWebhook(
-  signature: string,
-  rawBody: string,
-  config: ShopeeConfig,
-): boolean {
-  const baseString = `${process.env.SHOPEE_WEBHOOK2}|${rawBody}`;
-
-  const calculated = createHmac('sha256', config.partnerKey)
-    .update(baseString)
-    .digest('hex');
-
-  return calculated === signature;
-}
-
