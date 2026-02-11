@@ -2,10 +2,12 @@ import axios from 'axios';
 import { SHOPEE_END_POINT, SHOPEE_PATH } from '../common/constant';
 import { ShopeeConfig } from '../dto/request/config.request';
 import * as ShopeeHelper from '../common/helper';
-import { ShopeeResponseGetReturnDetail } from '../dto/response/return-detail.response';
-import { ShopeeResponseGetReturnList } from '../dto/response/return-list.response';
-import { ShopeeGetReturnListRequest } from '../dto/request/return-list.request';
-import { buildOptionalParams } from '../common/helper';
+import { buildOptionalParams } from '../common/helper'
+import {
+  ShopeeResponseGetReturnDetail,
+  ShopeeResponseGetReturnList,
+  ShopeeGetReturnListRequest,
+} from '../dto';
 
 export async function getReturnList(
   config: ShopeeConfig,
