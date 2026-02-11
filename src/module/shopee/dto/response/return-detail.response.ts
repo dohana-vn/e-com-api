@@ -87,16 +87,6 @@ export interface ShopeeReturnListItem {
   update_time: number;
 }
 
-export interface ShopeeResponseGetReturnList {
-  request_id?: string;
-  error?: string;
-  message?: string;
-  response?: {
-    return_list: ShopeeReturnListItem[];
-    more: boolean;
-  };
-}
-
 export interface ShopeeResponseGetReturnDetail {
   request_id?: string;
   error?: string;
