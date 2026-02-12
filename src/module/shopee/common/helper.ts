@@ -154,6 +154,19 @@ function refreshTokenExpire30Days() {
   return getTimestampNow() + 30 * 24 * 60 * 60;
 }
 
+function buildOptionalParams(
+  params?: Record<string, any>,
+): Record<string, string | number | boolean> {
+  if (!params) return {};
+
+  return Object.fromEntries(
+    Object.entries(params).filter(
+      ([_, value]) => value !== undefined && value !== null,
+    ),
+  );
+}
+
+
 export {
   buildCommonParameters,
   getTimestampMinutesAgo,
@@ -169,4 +182,5 @@ export {
   isAccessTokenValid,
   isTokenExpired,
   refreshTokenExpire30Days,
+  buildOptionalParams,
 };

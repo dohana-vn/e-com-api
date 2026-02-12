@@ -74,7 +74,6 @@ enum PATH {
   REFRESH_TOKEN = '/api/v2/auth/access_token/get',
   GET_SHIPPING_DOCUMENTS = '/api/v2/logistics/get_shipping_document_result',
   CREATE_SHIPPING_DOCUMENTS = '/api/v2/logistics/create_shipping_document',
-  TRACKING_NUMBER = '/api/v2/logistics/get_tracking_number',
   TRACKING_INFO = '/api/v2/logistics/get_tracking_info',
   DOWNLOAD_SHIPPING_DOCUMENT = '/api/v2/logistics/download_shipping_document',
   GET_SHIPPING_INFO = '/api/v2/logistics/get_shipping_document_data_info',
@@ -98,6 +97,8 @@ enum PATH {
   GET_BRAND_LIST = '/api/v2/product/get_brand_list',
   GET_ATTRIBUTES = '/api/v2/product/get_attribute_tree',
   GET_PROFILE = '/api/v2/shop/get_profile',
+  GET_BOOKING_TRACKING_NUMBER = '/api/v2/logistics/get_booking_tracking_number',
+  GET_TRACKING_NUMBER = '/api/v2/logistics/get_tracking_number',
 }
 
 export {
