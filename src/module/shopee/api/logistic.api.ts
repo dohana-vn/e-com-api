@@ -140,3 +140,39 @@ export async function getTrackingNumber(
   return ShopeeHelper.httpGet(url, config);
 }
 
+/**
+ *
+ * @param packageNumbers - List package_number (max 50)
+ * @param config - Shopee API configuration.
+ * @returns {Promise<any>}
+ */
+export async function getMassTrackingNumber(
+  packageNumbers: string[],
+  config: ShopeeConfig,
+): Promise<any> {
+  const timestamp = ShopeeHelper.getTimestampNow();
+
+  const signature = ShopeeHelper.signRequest(
+    SHOPEE_PATH.GET_MASS_TRACKING_NUMBER,
+    config,
+    timestamp,
+  );
+
+  const commonParam = ShopeeHelper.buildCommonParams(
+    config,
+    signature,
+    timestamp,
+  );
+
+  const body = {
+    package_list: packageNumbers.map((pkg) => ({
+      package_number: pkg,
+    })),
+    response_optional_fields: 'first_mile_tracking_number',
+  };
+
+  const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.GET_MASS_TRACKING_NUMBER}${commonParam}`;
+
+  return ShopeeHelper.httpPost(url, body, config);
+}
+
