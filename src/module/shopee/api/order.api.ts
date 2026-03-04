@@ -92,3 +92,44 @@ export async function getOrderDetails(
   return ShopeeHelper.httpGet(url, config);
 }
 
+/**
+ * Get package detail by package number list
+ * @param packageNumbers
+ * @param config
+ * @returns
+ */
+export async function getPackageNumberDetail(
+  packageNumbers: string[],
+  config: ShopeeConfig,
+): Promise<any> {
+  if (!packageNumbers.length) {
+    throw new Error('packageNumbers is empty');
+  }
+
+  if (packageNumbers.length > 50) {
+    throw new Error('Shopee only allows max 50 package_number per request');
+  }
+
+  const timestamp = ShopeeHelper.getTimestampNow();
+
+  const signature = ShopeeHelper.signRequest(
+    SHOPEE_PATH.PACKAGE_DETAIL,
+    config,
+    timestamp,
+  );
+
+  const additionalParams = {
+    package_number_list: packageNumbers.join(','),
+  };
+
+  const commonParam = ShopeeHelper.buildCommonParams(
+    config,
+    signature,
+    timestamp,
+    additionalParams,
+  );
+
+  const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.PACKAGE_DETAIL}${commonParam}`;
+
+  return ShopeeHelper.httpGet(url, config);
+}
