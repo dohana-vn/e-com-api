@@ -6,8 +6,8 @@ import { getOrderDetail, getOrderList } from './api/v2/order.api';
 import { TiktokConfig } from './dto/request/config.request';
 import { fetchTokenWithTiktokAuthCode, getAuthorizedShop, refreshToken } from './api/v2/authorization.api';
 import { createProduct, getAttributes, getBrands, getCategories, getListProduct, getProductDetail } from './api/v2/product.api';
-import {detailPackage, getPackageShippingDocument, getPackageTimeSlots, shipPackage} from './api/v2/fulfillment.api';
-import { TiktokRequestShipPackage } from './dto/request/fulfillment.request';
+import {detailPackage, getPackageShippingDocument, getPackageTimeSlots, searchPackage, shipPackage} from './api/v2/fulfillment.api';
+import { TiktokRequestSearchPackage, TiktokRequestShipPackage } from './dto/request/fulfillment.request';
 import { TIKTOK_DOCUMENT_TYPE } from './common/constant';
 import { TiktokResponseAttributes, TiktokResponseBrands, TiktokResponseCategories } from './dto/response/product.response';
 import { TiktokResponseAccessToken, TiktokResponseAuthorized, TiktokResponseRefreshToken } from './dto/response/config.response';
@@ -96,4 +96,8 @@ export class TiktokModule {
   async searchReturnRefund(returnIds: string[], from: number, params: {page_size: number;page_token?: string}): Promise<ResponseReturnOrdersDataDto> {
     return await searchReturns(returnIds, from, params, this.config);
   }
+
+  async searchPackage(payload: TiktokRequestSearchPackage, params: { page_size: number; page_token?: string; sort_field?: string; sort_order?: string }): Promise<any> {
+    return await searchPackage(payload, params, this.config);
+  } 
 }

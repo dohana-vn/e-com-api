@@ -1,8 +1,8 @@
 import { TIKTOK_DOCUMENT_TYPE, TIKTOK_PATH_202309 } from '../../common/constant';
 import * as TiktokHelper from '../../common/helper';
 import { TiktokConfig } from '../../dto/request/config.request';
-import { TiktokRequestShipPackage } from '../../dto/request/fulfillment.request';
 import { TiktokResponsePackageTimeSlot } from '../../dto/response/fulfillment.response';
+import { TiktokRequestSearchPackage, TiktokRequestShipPackage } from '../../dto/request/fulfillment.request';
 
 /**
  * Detail Package
@@ -85,4 +85,31 @@ export async function getPackageShippingDocument(packageId: string, documentType
   const url = TiktokHelper.genURLWithSignature(pathShippingDocument, commonParam, config);
 
   return TiktokHelper.httpGet(url, config);
+}
+
+export async function searchPackage(
+  payload: TiktokRequestSearchPackage,
+  params: { page_size: number; page_token?: string; sort_field?: string; sort_order?: string },
+  config: TiktokConfig,
+): Promise<any> {
+
+  const timestamp = Math.floor(Date.now() / 1000);
+  const commonParam = TiktokHelper.commonParameter2(config, timestamp);
+
+  const query = `${commonParam}&page_size=${params.page_size}${
+    params.page_token ? `&page_token=${params.page_token}` : ''
+  }${params.sort_field ? `&sort_field=${params.sort_field}` : ''}${
+    params.sort_order ? `&sort_order=${params.sort_order}` : ''
+  }`;
+
+  const url = TiktokHelper.genURLWithSignature(
+    TIKTOK_PATH_202309.PACKAGE_SEARCH,
+    query,
+    config,
+    payload
+  );
+
+  const headers = TiktokHelper.getHeaders(config);
+
+  return TiktokHelper.httpPost(url, payload, headers);
 }
