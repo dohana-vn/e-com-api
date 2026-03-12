@@ -102,11 +102,6 @@ export async function searchPackage(
     params.sort_order ? `&sort_order=${params.sort_order}` : ''
   }`;
 
-  // const url = TiktokHelper.genURLWithSignature(
-  //   TIKTOK_PATH_202309.PACKAGE_SEARCH,
-  //   query,
-  //   config,
-  // );
   const url = TiktokHelper.genURLWithSignature(
     TIKTOK_PATH_202309.PACKAGE_SEARCH,
     query,
