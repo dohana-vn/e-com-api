@@ -14,4 +14,12 @@ interface ShipPackage {
   self_shipment?: SelfShipment;
 }
 
+export interface TiktokRequestSearchPackage {
+  create_time_ge?: number;
+  create_time_lt?: number;
+  update_time_ge?: number;
+  update_time_lt?: number;
+  package_status?: string;
+}
+
 export { ShipPackage as TiktokRequestShipPackage };
