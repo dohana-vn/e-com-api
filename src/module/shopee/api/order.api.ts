@@ -61,7 +61,7 @@ export async function getOrdersV2(
     );
 
     const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.ORDER_LIST}${commonParams}`;
-    console.log('getOrdersV2 url', url);
+
     const res = await axios.get(url);
 
     if (!res.data?.response?.order_list?.length) break;
