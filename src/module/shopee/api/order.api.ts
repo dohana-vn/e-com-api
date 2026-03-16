@@ -51,12 +51,13 @@ export async function getOrdersV2(
       timestamp,
     );
 
-    const commonParams = ShopeeHelper.buildCommonParameters(
+    const commonParams = ShopeeHelper.buildCommonParametersWithTimeRange(
       config,
       signature,
-      timeTo,
+      timestamp,
       timeFrom,
       cursor,
+      timeTo,
     );
 
     const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.ORDER_LIST}${commonParams}`;

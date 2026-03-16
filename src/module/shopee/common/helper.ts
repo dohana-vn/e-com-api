@@ -57,7 +57,7 @@ function buildCommonParameters(config, signature, timestamp, timeFrom, cursor) {
   )}&time_range_field=create_time&time_from=${timeFrom}&time_to=${timestamp}&page_size=50&cursor=${cursor}`;
 }
 
-function buildCommonParametersV2(
+function buildCommonParametersWithTimeRange(
   config,
   signature,
   timestamp,
@@ -198,5 +198,5 @@ export {
   isTokenExpired,
   refreshTokenExpire30Days,
   buildOptionalParams,
-  buildCommonParametersV2,
+  buildCommonParametersWithTimeRange,
 };
