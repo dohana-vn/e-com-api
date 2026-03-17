@@ -33,6 +33,48 @@ export async function getOrders(beforeMinutes: number, config: ShopeeConfig) {
   return orderList.map((item: any) => item.order_sn);
 }
 
+export async function getOrdersV2(
+  config: ShopeeConfig,
+  timeFrom: number,
+  timeTo: number,
+) {
+  let cursor = '';
+  const orderList: string[] = [];
+  let hasMoreData = true;
+
+  while (hasMoreData) {
+    const timestamp = ShopeeHelper.getTimestampNow();
+
+    const signature = ShopeeHelper.signRequest(
+      SHOPEE_PATH.ORDER_LIST,
+      config,
+      timestamp,
+    );
+
+    const commonParams = ShopeeHelper.buildCommonParametersWithTimeRange(
+      config,
+      signature,
+      timestamp,
+      timeFrom,
+      cursor,
+      timeTo,
+    );
+
+    const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.ORDER_LIST}${commonParams}`;
+
+    const res = await axios.get(url);
+
+    if (!res.data?.response?.order_list?.length) break;
+
+    orderList.push(...res.data.response.order_list);
+
+    cursor = res.data.response.next_cursor;
+    hasMoreData = res.data.response.more;
+  }
+
+  return orderList.map((item: any) => item.order_sn);
+}
+
 /**
  *
  * @param orderNumber

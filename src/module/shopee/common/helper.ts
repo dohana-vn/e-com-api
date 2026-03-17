@@ -57,6 +57,21 @@ function buildCommonParameters(config, signature, timestamp, timeFrom, cursor) {
   )}&time_range_field=create_time&time_from=${timeFrom}&time_to=${timestamp}&page_size=50&cursor=${cursor}`;
 }
 
+function buildCommonParametersWithTimeRange(
+  config,
+  signature,
+  timestamp,
+  timeFrom,
+  cursor,
+  timeTo,
+) {
+  return `${commonParameter(
+    config,
+    signature,
+    timestamp,
+  )}&time_range_field=create_time&time_from=${timeFrom}&time_to=${timeTo}&page_size=50&cursor=${cursor}`;
+}
+
 function buildCommonParams(config: any, signature: string, timestamp: number, additionalParams?: Record<string, any>): string {
   const { partnerId, accessToken, shopId } = config;
   let paramString = `?shop_id=${shopId}&partner_id=${partnerId}&access_token=${accessToken}&sign=${signature}&timestamp=${timestamp}`;
@@ -183,4 +198,5 @@ export {
   isTokenExpired,
   refreshTokenExpire30Days,
   buildOptionalParams,
+  buildCommonParametersWithTimeRange,
 };
