@@ -39,6 +39,41 @@ export async function getOrderList(before: number, params: {page_size: number;pa
   return TiktokHelper.httpPost(url, body, headers);
 }
 
+export async function getOrdersByCreateTimeRange(
+  timeFrom: number,
+  timeTo: number,
+  params: { page_size: number; page_token?: string },
+  config: TiktokConfig,
+): Promise<any> {
+  const timestamp = Math.floor(Date.now() / 1000);
+
+  const commonParam = TiktokHelper.commonParameter3(
+    config,
+    {
+      page_size: params.page_size,
+      page_token: params.page_token,
+      version: '202309',
+    },
+    timestamp,
+  );
+
+  const body = {
+    create_time_ge: timeFrom,
+    create_time_lt: timeTo,
+  };
+
+  const url = TiktokHelper.genURLWithSignatureV2(
+    TIKTOK_PATH_202309.ORDER_LIST,
+    commonParam,
+    config,
+    body,
+  );
+
+  const headers = TiktokHelper.getHeaders(config);
+
+  return TiktokHelper.httpPost(url, body, headers);
+}
+
 /**
  *
  * @param packageId - Package ID.
