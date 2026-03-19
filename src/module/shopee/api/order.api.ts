@@ -175,3 +175,32 @@ export async function getPackageNumberDetail(
 
   return ShopeeHelper.httpGet(url, config);
 }
+
+export async function searchPackageList(
+  config: ShopeeConfig,
+  body: any,
+): Promise<any> {
+  const timestamp = ShopeeHelper.getTimestampNow();
+
+  const signature = ShopeeHelper.signRequest(
+    SHOPEE_PATH.SEARCH_PACKAGE_LIST, 
+    config,
+    timestamp,
+  );
+
+  const commonParams = ShopeeHelper.buildCommonParams(
+    config,
+    signature,
+    timestamp,
+  );
+
+  const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.SEARCH_PACKAGE_LIST}${commonParams}`;
+
+  const res = await axios.post(url, body, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  return res.data;
+}

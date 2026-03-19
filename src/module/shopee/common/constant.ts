@@ -101,6 +101,7 @@ enum PATH {
   GET_TRACKING_NUMBER = '/api/v2/logistics/get_tracking_number',
   GET_MASS_TRACKING_NUMBER = '/api/v2/logistics/get_mass_tracking_number',
   PACKAGE_DETAIL = '/api/v2/order/get_package_detail',
+  SEARCH_PACKAGE_LIST = '/api/v2/order/search_package_list',
 }
 
 export {
