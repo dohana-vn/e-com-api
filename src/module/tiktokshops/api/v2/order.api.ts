@@ -58,8 +58,8 @@ export async function getOrdersByCreateTimeRange(
   );
 
   const body = {
-    create_time_ge: timeFrom,
-    create_time_lt: timeTo,
+    create_time_ge: Number(timeFrom),
+    create_time_lt: Number(timeTo),
   };
 
   const url = TiktokHelper.genURLWithSignatureV2(
