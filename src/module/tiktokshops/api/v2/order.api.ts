@@ -69,6 +69,9 @@ export async function getOrdersByCreateTimeRange(
     body,
   );
 
+  console.log('body', JSON.stringify(body));
+  console.log('url', url);
+
   const headers = TiktokHelper.getHeaders(config);
 
   return TiktokHelper.httpPost(url, body, headers);
