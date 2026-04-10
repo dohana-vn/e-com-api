@@ -2,7 +2,7 @@ import { searchReturns } from './api/v2/return-refund.api';
 
 export * from './api/v2/authorization.api'
 export * from './dto/response'
-import { getOrderDetail, getOrderList, getOrdersByCreateTimeRange } from './api/v2/order.api';
+import { getOrderDetail, getOrderList, getOrderListByRange, getOrdersByCreateTimeRange } from './api/v2/order.api';
 import { TiktokConfig } from './dto/request/config.request';
 import { fetchTokenWithTiktokAuthCode, getAuthorizedShop, refreshToken } from './api/v2/authorization.api';
 import { createProduct, getAttributes, getBrands, getCategories, getListProduct, getProductDetail } from './api/v2/product.api';
@@ -35,6 +35,10 @@ export class TiktokModule {
 
   async getOrderList(from: number, params: {page_size: number;page_token?: string}): Promise<any> {
     return await getOrderList(from, params, this.config);
+  }
+
+  async getOrderListByRange(from: number, to: number, params: {page_size: number;page_token?: string}): Promise<any> {
+    return await getOrderListByRange(from, to, params, this.config);
   }
 
   async getOrderDetail(orderNumber: string): Promise<TiktokResponseOrderDetail> {
@@ -100,7 +104,7 @@ export class TiktokModule {
   async searchPackage(payload: TiktokRequestSearchPackage, params: { page_size: number; page_token?: string; sort_field?: string; sort_order?: string }): Promise<any> {
     return await searchPackage(payload, params, this.config);
   } 
-  
+
   async getOrderByCreateTimeRange(timeFrom: number, timeTo: number, params: { page_size: number; page_token?: string }): Promise<any> {
     return await getOrdersByCreateTimeRange(timeFrom, timeTo, params, this.config);
   }

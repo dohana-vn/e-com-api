@@ -21,6 +21,8 @@ export async function getOrderDetail(orderNumber: string, config: TiktokConfig):
 
 /**
  * Fetches the list of order.
+ * @param before
+ * @param params
  * @param {TiktokConfig} config - Tiktok API configuration.
  * @returns {Promise<any>} The response containing the list of order.
  */
@@ -68,6 +70,30 @@ export async function getOrdersByCreateTimeRange(
     config,
     body,
   );
+
+  const headers = TiktokHelper.getHeaders(config);
+
+  return TiktokHelper.httpPost(url, body, headers);
+}
+
+/**
+ * Fetches the list of order.
+ * @param before
+ * @param after
+ * @param params
+ * @param {TiktokConfig} config - Tiktok API configuration.
+ * @returns {Promise<any>} The response containing the list of order.
+ */
+export async function getOrderListByRange(before: number, after: number, params: {page_size: number;page_token?: string}, config: TiktokConfig): Promise<any> {
+  const timestamp = Math.floor(Date.now() / 1000);
+  const commonParam = TiktokHelper.commonParameter3(config, {page_size: params.page_size, page_token: params.page_token, version: '202309'}, timestamp);
+
+  const body = {
+    update_time_ge: before,
+    update_time_lt: after,
+  };
+
+  const url = TiktokHelper.genURLWithSignatureV2(TIKTOK_PATH_202309.ORDER_LIST, commonParam, config, body);
 
   const headers = TiktokHelper.getHeaders(config);
 
