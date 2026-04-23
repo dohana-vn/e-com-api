@@ -97,6 +97,7 @@ enum PATH {
   GET_BRAND_LIST = '/api/v2/product/get_brand_list',
   GET_ATTRIBUTES = '/api/v2/product/get_attribute_tree',
   GET_PROFILE = '/api/v2/shop/get_profile',
+  GET_SHOP_INFO = '/api/v2/shop/get_shop_info',
   GET_BOOKING_TRACKING_NUMBER = '/api/v2/logistics/get_booking_tracking_number',
   GET_TRACKING_NUMBER = '/api/v2/logistics/get_tracking_number',
   GET_MASS_TRACKING_NUMBER = '/api/v2/logistics/get_mass_tracking_number',
