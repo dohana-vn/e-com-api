@@ -210,11 +210,14 @@ async function buildImageUploadFormData(returnSn: string, imagePath: string): Pr
     throw new Error('Shopee convert_image only supports .jpg, .jpeg, and .png files');
   }
 
-  const imageBuffer = await readFile(imagePath);
+  const { stat } = await import('fs/promises');
+  const { size } = await stat(imagePath);
 
-  if (imageBuffer.byteLength > MAX_IMAGE_UPLOAD_SIZE) {
+  if (size > MAX_IMAGE_UPLOAD_SIZE) {
     throw new Error('Shopee convert_image only supports files up to 10MB');
   }
+
+  const imageBuffer = await readFile(imagePath);
 
   const formData = new FormData();
   formData.append('return_sn', returnSn);
