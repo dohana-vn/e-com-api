@@ -1,4 +1,5 @@
 export * from './config.response'
+export * from './convert-image.response'
 export * from './logistic.reponse'
 export * from './order.response'
 export * from './product.response'

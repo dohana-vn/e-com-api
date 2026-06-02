@@ -34,16 +34,26 @@ import {
   ShopeeResponseShippingParameter,
 } from './dto/response/logistic.reponse';
 import {
+  convertReturnImage,
+  getReturnDetail,
+  getReturnList,
+} from './api/return-refund.api';
+import {
   fetchTokenWithAuthCode,
   fetchTokenWithRefreshToken,
   getShopInfo,
   getShopProfile,
 } from './api/authorization.api';
 import {
+  ShopeeConvertReturnImageRequest,
+  ShopeeGetReturnListRequest,
   ShopeeResponseRefreshAccessToken,
+  ShopeeResponseConvertReturnImage,
+  ShopeeResponseGetReturnDetail,
+  ShopeeResponseGetReturnList,
   ShopeeResponseShopInfo,
   ShopeeResponseShopProfile,
-} from './dto/response/config.response';
+} from './dto';
 
 export class ShopeeModule {
   private readonly config: ShopeeConfig;
@@ -134,5 +144,17 @@ export class ShopeeModule {
 
   async getShopInfo(): Promise<ShopeeResponseShopInfo> {
     return await getShopInfo(this.config);
+  }
+
+  async getReturnList(params: ShopeeGetReturnListRequest): Promise<ShopeeResponseGetReturnList> {
+    return await getReturnList(this.config, params);
+  }
+
+  async getReturnDetail(returnSn: string): Promise<ShopeeResponseGetReturnDetail> {
+    return await getReturnDetail(this.config, returnSn);
+  }
+
+  async convertReturnImage(params: ShopeeConvertReturnImageRequest): Promise<ShopeeResponseConvertReturnImage> {
+    return await convertReturnImage(this.config, params);
   }
 }
