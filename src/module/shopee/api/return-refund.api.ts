@@ -2,8 +2,10 @@ import { SHOPEE_END_POINT, SHOPEE_PATH } from '../common/constant';
 import { ShopeeConfig } from '../dto/request/config.request';
 import * as ShopeeHelper from '../common/helper';
 import {
+  ShopeeConvertReturnImageRequest,
   ShopeeResponseGetReturnDetail,
   ShopeeResponseGetReturnList,
+  ShopeeResponseConvertReturnImage,
   ShopeeGetReturnListRequest,
 } from '../dto';
 
@@ -66,6 +68,34 @@ export async function getReturnDetail(
   const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.RETURN_DETAIL}${commonParam}`;
 
   return ShopeeHelper.httpGet(url, config);
+}
+
+export async function convertReturnImage(
+  config: ShopeeConfig,
+  params: ShopeeConvertReturnImageRequest,
+): Promise<ShopeeResponseConvertReturnImage> {
+  const timestamp = ShopeeHelper.getTimestampNow();
+
+  const signature = ShopeeHelper.signRequest(
+    SHOPEE_PATH.RETURN_CONVERT_IMAGE,
+    config,
+    timestamp,
+  );
+
+  const commonParam = ShopeeHelper.buildCommonParams(
+    config,
+    signature,
+    timestamp,
+  );
+
+  const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.RETURN_CONVERT_IMAGE}${commonParam}`;
+
+  const formData = await ShopeeHelper.buildImageUploadFormData(
+    params.returnSn,
+    params.uploadImagePath,
+  );
+
+  return ShopeeHelper.httpPostMultipart(url, formData);
 }
 
 
