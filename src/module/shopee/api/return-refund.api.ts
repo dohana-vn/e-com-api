@@ -4,6 +4,7 @@ import * as ShopeeHelper from '../common/helper';
 import {
   ShopeeConvertReturnImageRequest,
   ShopeeResponseGetReturnDetail,
+  ShopeeResponseGetReturnDisputeReason,
   ShopeeResponseGetReturnList,
   ShopeeResponseConvertReturnImage,
   ShopeeGetReturnListRequest,
@@ -66,6 +67,31 @@ export async function getReturnDetail(
   );
 
   const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.RETURN_DETAIL}${commonParam}`;
+
+  return ShopeeHelper.httpGet(url, config);
+}
+
+export async function getReturnDisputeReason(
+  config: ShopeeConfig,
+  returnSn: string,
+): Promise<ShopeeResponseGetReturnDisputeReason> {
+  const timestamp = ShopeeHelper.getTimestampNow();
+
+  const signature = ShopeeHelper.signRequest(
+    SHOPEE_PATH.RETURN_DISPUTE_REASON,
+    config,
+    timestamp,
+  );
+
+  const commonParam = ShopeeHelper.buildCommonParams(
+    config,
+    signature,
+    timestamp,
+    { return_sn: returnSn },
+  );
+
+  const url =
+    `${SHOPEE_END_POINT}${SHOPEE_PATH.RETURN_DISPUTE_REASON}${commonParam}`;
 
   return ShopeeHelper.httpGet(url, config);
 }

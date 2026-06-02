@@ -1,9 +1,9 @@
 export * from './api/authorization.api'
 export * from './dto'
 import { ShopeeConfig } from './dto/request/config.request';
-import { 
-  getOrderDetail, 
-  getOrders, 
+import {
+  getOrderDetail,
+  getOrders,
   getOrderDetails
 } from './api/order.api';
 import {
@@ -36,6 +36,7 @@ import {
 import {
   convertReturnImage,
   getReturnDetail,
+  getReturnDisputeReason,
   getReturnList,
 } from './api/return-refund.api';
 import {
@@ -50,6 +51,7 @@ import {
   ShopeeResponseRefreshAccessToken,
   ShopeeResponseConvertReturnImage,
   ShopeeResponseGetReturnDetail,
+  ShopeeResponseGetReturnDisputeReason,
   ShopeeResponseGetReturnList,
   ShopeeResponseShopInfo,
   ShopeeResponseShopProfile,
@@ -152,6 +154,12 @@ export class ShopeeModule {
 
   async getReturnDetail(returnSn: string): Promise<ShopeeResponseGetReturnDetail> {
     return await getReturnDetail(this.config, returnSn);
+  }
+
+  async getReturnDisputeReason(
+    returnSn: string,
+  ): Promise<ShopeeResponseGetReturnDisputeReason> {
+    return await getReturnDisputeReason(this.config, returnSn);
   }
 
   async convertReturnImage(params: ShopeeConvertReturnImageRequest): Promise<ShopeeResponseConvertReturnImage> {
