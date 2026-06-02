@@ -7,6 +7,7 @@ import {
   ShopeeResponseGetReturnDetail,
   ShopeeResponseGetReturnDisputeReason,
   ShopeeResponseGetReturnList,
+  ShopeeResponseQueryReturnProof,
   ShopeeResponseConvertReturnImage,
   ShopeeResponseUploadReturnProof,
   ShopeeGetReturnListRequest,
@@ -94,6 +95,30 @@ export async function getReturnDisputeReason(
 
   const url =
     `${SHOPEE_END_POINT}${SHOPEE_PATH.RETURN_DISPUTE_REASON}${commonParam}`;
+
+  return ShopeeHelper.httpGet(url, config);
+}
+
+export async function queryReturnProof(
+  config: ShopeeConfig,
+  returnSn: string,
+): Promise<ShopeeResponseQueryReturnProof> {
+  const timestamp = ShopeeHelper.getTimestampNow();
+
+  const signature = ShopeeHelper.signRequest(
+    SHOPEE_PATH.RETURN_QUERY_PROOF,
+    config,
+    timestamp,
+  );
+
+  const commonParam = ShopeeHelper.buildCommonParams(
+    config,
+    signature,
+    timestamp,
+    { return_sn: returnSn },
+  );
+
+  const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.RETURN_QUERY_PROOF}${commonParam}`;
 
   return ShopeeHelper.httpGet(url, config);
 }

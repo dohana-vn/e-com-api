@@ -90,6 +90,7 @@ enum PATH {
   SEARCH_ITEM = '/api/v2/product/search_item',
   RETURN_DETAIL = '/api/v2/returns/get_return_detail',
   RETURN_DISPUTE_REASON = '/api/v2/returns/get_return_dispute_reason',
+  RETURN_QUERY_PROOF = '/api/v2/returns/query_proof',
   RETURN_LIST = '/api/v2/returns/get_return_list',
   RETURN_CONVERT_IMAGE = '/api/v2/returns/convert_image',
   RETURN_UPLOAD_PROOF = '/api/v2/returns/upload_proof',
