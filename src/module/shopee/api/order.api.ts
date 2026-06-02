@@ -22,6 +22,7 @@ export async function getOrders(beforeMinutes: number, config: ShopeeConfig) {
     const commonParams = ShopeeHelper.buildCommonParameters(config, signature, timestamp, timeFrom, cursor);
 
     const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.ORDER_LIST}${commonParams}`;
+    console.log('url', url);
     const res = await axios.get(url);
     if (res.data?.respone?.order_list.length < 1) break;
     orderList.push(...res.data.response.order_list);
@@ -51,6 +52,8 @@ export async function getOrdersV2(
       timestamp,
     );
 
+    console.log('signature', signature);
+
     const commonParams = ShopeeHelper.buildCommonParametersWithTimeRange(
       config,
       signature,
@@ -61,6 +64,7 @@ export async function getOrdersV2(
     );
 
     const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.ORDER_LIST}${commonParams}`;
+    console.log('url', url);
 
     const res = await axios.get(url);
 
@@ -85,6 +89,7 @@ export async function getOrderDetail(orderNumber: string, config: ShopeeConfig):
   const timestamp = ShopeeHelper.getTimestampNow();
   const optionalField = ShopeeHelper.optionalField();
   const signature = ShopeeHelper.signRequest(SHOPEE_PATH.ORDER_DETAIL, config, timestamp);
+  console.log('signature', signature);
   // const commonParam = `${ShopeeHelper.commonParameter(config, signature, timestamp)}&order_sn_list=${orderNumber}&response_optional_fields=${optionalField.join(',')}`;
   const additionalParams = {
     order_sn_list: orderNumber,
@@ -93,6 +98,7 @@ export async function getOrderDetail(orderNumber: string, config: ShopeeConfig):
 
   const commonParam = ShopeeHelper.buildCommonParams(config, signature, timestamp, additionalParams);
   const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.ORDER_DETAIL}${commonParam}`;
+  console.log('url', url);
 
   return ShopeeHelper.httpGet(url, config);
 }
@@ -116,6 +122,7 @@ export async function getOrderDetails(
     config,
     timestamp,
   );
+  console.log('signature', signature);
 
   const additionalParams = {
     order_sn_list: orderSns.join(','),
@@ -130,6 +137,7 @@ export async function getOrderDetails(
   );
 
   const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.ORDER_DETAIL}${commonParam}`;
+  console.log('url', url);
 
   return ShopeeHelper.httpGet(url, config);
 }
