@@ -1,9 +1,9 @@
 export * from './api/authorization.api'
 export * from './dto'
 import { ShopeeConfig } from './dto/request/config.request';
-import { 
-  getOrderDetail, 
-  getOrders, 
+import {
+  getOrderDetail,
+  getOrders,
   getOrderDetails
 } from './api/order.api';
 import {
@@ -34,16 +34,28 @@ import {
   ShopeeResponseShippingParameter,
 } from './dto/response/logistic.reponse';
 import {
+  convertReturnImage,
+  getReturnDetail,
+  getReturnDisputeReason,
+  getReturnList,
+} from './api/return-refund.api';
+import {
   fetchTokenWithAuthCode,
   fetchTokenWithRefreshToken,
   getShopInfo,
   getShopProfile,
 } from './api/authorization.api';
 import {
+  ShopeeConvertReturnImageRequest,
+  ShopeeGetReturnListRequest,
   ShopeeResponseRefreshAccessToken,
+  ShopeeResponseConvertReturnImage,
+  ShopeeResponseGetReturnDetail,
+  ShopeeResponseGetReturnDisputeReason,
+  ShopeeResponseGetReturnList,
   ShopeeResponseShopInfo,
   ShopeeResponseShopProfile,
-} from './dto/response/config.response';
+} from './dto';
 
 export class ShopeeModule {
   private readonly config: ShopeeConfig;
@@ -134,5 +146,23 @@ export class ShopeeModule {
 
   async getShopInfo(): Promise<ShopeeResponseShopInfo> {
     return await getShopInfo(this.config);
+  }
+
+  async getReturnList(params: ShopeeGetReturnListRequest): Promise<ShopeeResponseGetReturnList> {
+    return await getReturnList(this.config, params);
+  }
+
+  async getReturnDetail(returnSn: string): Promise<ShopeeResponseGetReturnDetail> {
+    return await getReturnDetail(this.config, returnSn);
+  }
+
+  async getReturnDisputeReason(
+    returnSn: string,
+  ): Promise<ShopeeResponseGetReturnDisputeReason> {
+    return await getReturnDisputeReason(this.config, returnSn);
+  }
+
+  async convertReturnImage(params: ShopeeConvertReturnImageRequest): Promise<ShopeeResponseConvertReturnImage> {
+    return await convertReturnImage(this.config, params);
   }
 }
