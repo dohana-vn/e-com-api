@@ -35,6 +35,7 @@ import {
 } from './dto/response/logistic.reponse';
 import {
   convertReturnImage,
+  disputeReturn,
   getAvailableSolutions,
   getReturnDetail,
   getReturnDisputeReason,
@@ -50,8 +51,10 @@ import {
 } from './api/authorization.api';
 import {
   ShopeeConvertReturnImageRequest,
+  ShopeeDisputeReturnRequest,
   ShopeeGetReturnListRequest,
   ShopeeUploadReturnProofRequest,
+  ShopeeResponseDisputeReturn,
   ShopeeResponseGetAvailableSolutions,
   ShopeeResponseRefreshAccessToken,
   ShopeeResponseConvertReturnImage,
@@ -189,5 +192,11 @@ export class ShopeeModule {
     params: ShopeeUploadReturnProofRequest,
   ): Promise<ShopeeResponseUploadReturnProof> {
     return await uploadReturnProof(this.config, params);
+  }
+
+  async disputeReturn(
+    params: ShopeeDisputeReturnRequest,
+  ): Promise<ShopeeResponseDisputeReturn> {
+    return await disputeReturn(this.config, params);
   }
 }

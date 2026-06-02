@@ -3,7 +3,9 @@ import { ShopeeConfig } from '../dto/request/config.request';
 import * as ShopeeHelper from '../common/helper';
 import {
   ShopeeConvertReturnImageRequest,
+  ShopeeDisputeReturnRequest,
   ShopeeUploadReturnProofRequest,
+  ShopeeResponseDisputeReturn,
   ShopeeResponseGetAvailableSolutions,
   ShopeeResponseGetReturnDetail,
   ShopeeResponseGetReturnDisputeReason,
@@ -201,6 +203,37 @@ export async function uploadReturnProof(
   };
 
   const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.RETURN_UPLOAD_PROOF}${commonParam}`;
+
+  return ShopeeHelper.httpPost(url, body, config);
+}
+
+export async function disputeReturn(
+  config: ShopeeConfig,
+  params: ShopeeDisputeReturnRequest,
+): Promise<ShopeeResponseDisputeReturn> {
+  const timestamp = ShopeeHelper.getTimestampNow();
+
+  const signature = ShopeeHelper.signRequest(
+    SHOPEE_PATH.RETURN_DISPUTE,
+    config,
+    timestamp,
+  );
+
+  const commonParam = ShopeeHelper.buildCommonParams(
+    config,
+    signature,
+    timestamp,
+  );
+
+  const body = {
+    return_sn: params.returnSn,
+    email: params.email,
+    dispute_reason_id: params.disputeReasonId,
+    image_list: params.imageList,
+    dispute_text_reason: params.disputeTextReason,
+  };
+
+  const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.RETURN_DISPUTE}${commonParam}`;
 
   return ShopeeHelper.httpPost(url, body, config);
 }
