@@ -3,10 +3,12 @@ import { ShopeeConfig } from '../dto/request/config.request';
 import * as ShopeeHelper from '../common/helper';
 import {
   ShopeeConvertReturnImageRequest,
+  ShopeeUploadReturnProofRequest,
   ShopeeResponseGetReturnDetail,
   ShopeeResponseGetReturnDisputeReason,
   ShopeeResponseGetReturnList,
   ShopeeResponseConvertReturnImage,
+  ShopeeResponseUploadReturnProof,
   ShopeeGetReturnListRequest,
 } from '../dto';
 
@@ -122,6 +124,35 @@ export async function convertReturnImage(
   );
 
   return ShopeeHelper.httpPostMultipart(url, formData);
+}
+
+export async function uploadReturnProof(
+  config: ShopeeConfig,
+  params: ShopeeUploadReturnProofRequest,
+): Promise<ShopeeResponseUploadReturnProof> {
+  const timestamp = ShopeeHelper.getTimestampNow();
+
+  const signature = ShopeeHelper.signRequest(
+    SHOPEE_PATH.RETURN_UPLOAD_PROOF,
+    config,
+    timestamp,
+  );
+
+  const commonParam = ShopeeHelper.buildCommonParams(
+    config,
+    signature,
+    timestamp,
+  );
+
+  const body = {
+    return_sn: params.returnSn,
+    photo: params.photo,
+    description: params.description,
+  };
+
+  const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.RETURN_UPLOAD_PROOF}${commonParam}`;
+
+  return ShopeeHelper.httpPost(url, body, config);
 }
 
 

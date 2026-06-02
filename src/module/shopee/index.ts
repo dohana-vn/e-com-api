@@ -38,6 +38,7 @@ import {
   getReturnDetail,
   getReturnDisputeReason,
   getReturnList,
+  uploadReturnProof,
 } from './api/return-refund.api';
 import {
   fetchTokenWithAuthCode,
@@ -48,6 +49,7 @@ import {
 import {
   ShopeeConvertReturnImageRequest,
   ShopeeGetReturnListRequest,
+  ShopeeUploadReturnProofRequest,
   ShopeeResponseRefreshAccessToken,
   ShopeeResponseConvertReturnImage,
   ShopeeResponseGetReturnDetail,
@@ -55,6 +57,7 @@ import {
   ShopeeResponseGetReturnList,
   ShopeeResponseShopInfo,
   ShopeeResponseShopProfile,
+  ShopeeResponseUploadReturnProof,
 } from './dto';
 
 export class ShopeeModule {
@@ -164,5 +167,11 @@ export class ShopeeModule {
 
   async convertReturnImage(params: ShopeeConvertReturnImageRequest): Promise<ShopeeResponseConvertReturnImage> {
     return await convertReturnImage(this.config, params);
+  }
+
+  async uploadReturnProof(
+    params: ShopeeUploadReturnProofRequest,
+  ): Promise<ShopeeResponseUploadReturnProof> {
+    return await uploadReturnProof(this.config, params);
   }
 }

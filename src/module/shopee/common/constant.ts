@@ -92,6 +92,7 @@ enum PATH {
   RETURN_DISPUTE_REASON = '/api/v2/returns/get_return_dispute_reason',
   RETURN_LIST = '/api/v2/returns/get_return_list',
   RETURN_CONVERT_IMAGE = '/api/v2/returns/convert_image',
+  RETURN_UPLOAD_PROOF = '/api/v2/returns/upload_proof',
   RETURN_SOLUTION = '/api/v2/returns/get_available_solutions',
   RETURN_CONFIRM = '/api/v2/returns/confirm',
   GET_COMMENTS = '/api/v2/product/get_comment',
