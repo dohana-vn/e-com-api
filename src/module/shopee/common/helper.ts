@@ -157,7 +157,13 @@ async function httpPostDownload(url: string, body: any, config: ShopeeConfig) {
       validateStatus: () => true,
     });
 
-    const contentType = res.headers['content-type'];
+    const rawContentType = res.headers['content-type'];
+    const contentType =
+      typeof rawContentType === 'string'
+        ? rawContentType
+        : Array.isArray(rawContentType)
+          ? rawContentType.join('; ')
+          : undefined;
     const buffer =
       res.data instanceof Uint8Array ? res.data : new Uint8Array(res.data);
 
@@ -165,10 +171,23 @@ async function httpPostDownload(url: string, body: any, config: ShopeeConfig) {
       return JSON.parse(new TextDecoder().decode(buffer));
     }
 
-    const contentDisposition = res.headers['content-disposition'];
+    const rawContentDisposition = res.headers['content-disposition'];
+    const contentDisposition =
+      typeof rawContentDisposition === 'string'
+        ? rawContentDisposition
+        : Array.isArray(rawContentDisposition)
+          ? rawContentDisposition.join('; ')
+          : undefined;
     const filenameMatch = /filename\*?=(?:UTF-8''|\")?([^\";]+)/i.exec(
       contentDisposition ?? '',
     );
+
+    const rawContentLength = res.headers['content-length'];
+    const contentLength =
+      typeof rawContentLength === 'string' ||
+      typeof rawContentLength === 'number'
+        ? Number(rawContentLength)
+        : buffer.byteLength;
 
     return {
       buffer,
@@ -177,9 +196,7 @@ async function httpPostDownload(url: string, body: any, config: ShopeeConfig) {
       filename: filenameMatch?.[1]
         ? decodeURIComponent(filenameMatch[1].replace(/^\"|\"$/g, ''))
         : undefined,
-      contentLength: res.headers['content-length']
-        ? Number(res.headers['content-length'])
-        : buffer.length,
+      contentLength,
     };
   } catch (err: any) {
     return handleError(err);
