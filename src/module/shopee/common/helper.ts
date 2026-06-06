@@ -149,6 +149,43 @@ async function httpPost(url: string, body: any, headers: any) {
   }
 }
 
+async function httpPostDownload(url: string, body: any, config: ShopeeConfig) {
+  try {
+    const res: AxiosResponse<ArrayBuffer> = await axios.post(url, body, {
+      headers: getHeaders(config),
+      responseType: 'arraybuffer',
+      validateStatus: () => true,
+    });
+
+    const contentType = res.headers['content-type'];
+    const buffer =
+      res.data instanceof Uint8Array ? res.data : new Uint8Array(res.data);
+
+    if (contentType?.includes('application/json')) {
+      return JSON.parse(new TextDecoder().decode(buffer));
+    }
+
+    const contentDisposition = res.headers['content-disposition'];
+    const filenameMatch = /filename\*?=(?:UTF-8''|\")?([^\";]+)/i.exec(
+      contentDisposition ?? '',
+    );
+
+    return {
+      buffer,
+      contentType,
+      contentDisposition,
+      filename: filenameMatch?.[1]
+        ? decodeURIComponent(filenameMatch[1].replace(/^\"|\"$/g, ''))
+        : undefined,
+      contentLength: res.headers['content-length']
+        ? Number(res.headers['content-length'])
+        : buffer.length,
+    };
+  } catch (err: any) {
+    return handleError(err);
+  }
+}
+
 async function httpPostMultipart(url: string, formData: FormData, headers?: Record<string, string>) {
   try {
     const res: AxiosResponse = await axios.post(url, formData, {
@@ -238,6 +275,7 @@ export {
   optionalField,
   httpGet,
   httpPost,
+  httpPostDownload,
   httpPostMultipart,
   getHeaders,
   buildCommonParams,

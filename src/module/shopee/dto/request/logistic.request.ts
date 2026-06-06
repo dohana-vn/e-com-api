@@ -16,4 +16,18 @@ interface RequestShipOrder {
   };
 }
 
+interface RequestDownloadShippingDocumentOrder {
+  order_sn: string;
+  package_number?: string;
+}
+
+interface RequestDownloadShippingDocument {
+  shipping_document_type?: string;
+  order_list: RequestDownloadShippingDocumentOrder[];
+}
+
 export { RequestShipOrder as ShopeeRequestShipOrder };
+export {
+  RequestDownloadShippingDocument as ShopeeRequestDownloadShippingDocument,
+  RequestDownloadShippingDocumentOrder as ShopeeRequestDownloadShippingDocumentOrder,
+};
