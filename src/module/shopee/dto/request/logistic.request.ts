@@ -26,8 +26,21 @@ interface RequestDownloadShippingDocument {
   order_list: RequestDownloadShippingDocumentOrder[];
 }
 
+interface RequestCreateShippingDocumentOrder {
+  order_sn: string;
+  package_number?: string;
+  tracking_number?: string;
+  shipping_document_type?: string;
+}
+
+interface RequestCreateShippingDocument {
+  order_list: RequestCreateShippingDocumentOrder[];
+}
+
 export { RequestShipOrder as ShopeeRequestShipOrder };
 export {
+  RequestCreateShippingDocument as ShopeeRequestCreateShippingDocument,
+  RequestCreateShippingDocumentOrder as ShopeeRequestCreateShippingDocumentOrder,
   RequestDownloadShippingDocument as ShopeeRequestDownloadShippingDocument,
   RequestDownloadShippingDocumentOrder as ShopeeRequestDownloadShippingDocumentOrder,
 };

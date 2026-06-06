@@ -28,6 +28,7 @@ import {
   ShopeeResponseUpdateStock,
 } from './dto/response/product.response';
 import {
+  createShippingDocument,
   downloadShippingDocument,
   getChannelList,
   shipOrder,
@@ -56,6 +57,7 @@ import {
   getShopProfile,
 } from './api/authorization.api';
 import {
+  ShopeeRequestCreateShippingDocument,
   ShopeeRequestDownloadShippingDocument,
   ShopeeConvertReturnImageRequest,
   ShopeeDisputeReturnRequest,
@@ -151,6 +153,12 @@ export class ShopeeModule {
 
   async shipOrder(orderNumber: string, addressId: number, timeSlot: string): Promise<ShopeeResponseShipOrder> {
     return await shipOrder(orderNumber, addressId, timeSlot, this.config);
+  }
+
+  async createShippingDocument(
+    payload: ShopeeRequestCreateShippingDocument,
+  ): Promise<any> {
+    return await createShippingDocument(payload, this.config);
   }
 
   async downloadShippingDocument(
