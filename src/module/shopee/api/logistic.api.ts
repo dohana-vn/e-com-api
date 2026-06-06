@@ -10,6 +10,7 @@ import {
 import {
   ShopeeRequestCreateShippingDocument,
   ShopeeRequestDownloadShippingDocument,
+  ShopeeRequestGetShippingDocumentResult,
   ShopeeRequestShipOrder,
 } from '../dto/request/logistic.request';
 
@@ -216,6 +217,44 @@ export async function createShippingDocument(
   };
 
   const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.CREATE_SHIPPING_DOCUMENTS}${commonParam}`;
+
+  return ShopeeHelper.httpPost(url, body, config);
+}
+
+/**
+ *
+ * @param payload - Shipping document task query payload.
+ * @param config - Shopee API configuration.
+ * @returns {Promise<any>}
+ */
+export async function getShippingDocumentResult(
+  payload: ShopeeRequestGetShippingDocumentResult,
+  config: ShopeeConfig,
+): Promise<any> {
+  const timestamp = ShopeeHelper.getTimestampNow();
+  const signature = ShopeeHelper.signRequest(
+    SHOPEE_PATH.GET_SHIPPING_DOCUMENTS,
+    config,
+    timestamp,
+  );
+
+  const commonParam = ShopeeHelper.buildCommonParams(
+    config,
+    signature,
+    timestamp,
+  );
+
+  const body: ShopeeRequestGetShippingDocumentResult = {
+    order_list: payload.order_list.map((order) => ({
+      order_sn: order.order_sn,
+      ...(order.package_number ? { package_number: order.package_number } : {}),
+    })),
+    ...(payload.shipping_document_type
+      ? { shipping_document_type: payload.shipping_document_type }
+      : {}),
+  };
+
+  const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.GET_SHIPPING_DOCUMENTS}${commonParam}`;
 
   return ShopeeHelper.httpPost(url, body, config);
 }

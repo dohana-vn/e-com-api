@@ -30,6 +30,7 @@ import {
 import {
   createShippingDocument,
   downloadShippingDocument,
+  getShippingDocumentResult,
   getChannelList,
   shipOrder,
   shippingParameter,
@@ -59,6 +60,7 @@ import {
 import {
   ShopeeRequestCreateShippingDocument,
   ShopeeRequestDownloadShippingDocument,
+  ShopeeRequestGetShippingDocumentResult,
   ShopeeConvertReturnImageRequest,
   ShopeeDisputeReturnRequest,
   ShopeeGetReturnListRequest,
@@ -159,6 +161,12 @@ export class ShopeeModule {
     payload: ShopeeRequestCreateShippingDocument,
   ): Promise<any> {
     return await createShippingDocument(payload, this.config);
+  }
+
+  async getShippingDocumentResult(
+    payload: ShopeeRequestGetShippingDocumentResult,
+  ): Promise<any> {
+    return await getShippingDocumentResult(payload, this.config);
   }
 
   async downloadShippingDocument(

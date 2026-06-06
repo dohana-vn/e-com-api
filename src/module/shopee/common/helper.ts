@@ -185,7 +185,7 @@ async function httpPostDownload(url: string, body: any, config: ShopeeConfig) {
     const rawContentLength = res.headers['content-length'];
     const contentLength =
       typeof rawContentLength === 'string' ||
-      typeof rawContentLength === 'number'
+        typeof rawContentLength === 'number'
         ? Number(rawContentLength)
         : buffer.byteLength;
 
