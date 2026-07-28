@@ -1,7 +1,8 @@
 export * from './dto'
-import { NhanhConfig, NhanhProductSearchRequest, NhanhResponseAccessToken } from './dto';
+import { NhanhConfig, NhanhOrderListRequest, NhanhProductSearchRequest, NhanhResponseAccessToken, NhanhResponseOrderList } from './dto';
 import * as AuthorizationApi from './api/authorization.api';
 import { getListProduct } from './api/product.api';
+import { getOrderList } from './api/order.api';
 
 export class NhanhModule {
   private config: NhanhConfig;
@@ -30,5 +31,9 @@ export class NhanhModule {
 
   async getListProduct({params}: {params: NhanhProductSearchRequest}): Promise<any> {
     return await getListProduct(params, this.config);
+  }
+
+  async getOrderList(params: NhanhOrderListRequest): Promise<NhanhResponseOrderList> {
+    return await getOrderList(params, this.config);
   }
 }

@@ -5,6 +5,7 @@ enum PATH {
   AUTHORIZED_SHOP = '/app/getaccesstoken',
   GENERATE_AUTH_LINK = '/oauth',
   PRODUCT_LIST = '/api/product/search',
+  ORDER_LIST = '/order/list',
 }
 
 export {
