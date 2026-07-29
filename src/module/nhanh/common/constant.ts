@@ -4,7 +4,7 @@ const V3_END_POINT = 'https://pos.open.nhanh.vn/v3.0';
 enum PATH {
   AUTHORIZED_SHOP = '/app/getaccesstoken',
   GENERATE_AUTH_LINK = '/oauth',
-  PRODUCT_LIST = '/api/product/search',
+  PRODUCT_LIST = '/product/list',
   ORDER_LIST = '/order/list',
 }
 
