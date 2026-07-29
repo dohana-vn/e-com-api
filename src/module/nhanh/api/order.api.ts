@@ -6,8 +6,11 @@ export async function getOrderList(
   params: NhanhOrderListRequest,
   config: NhanhConfig,
 ): Promise<NhanhResponseOrderList> {
-  const commonParam = NhanHelper.commonParameter(config, params);
+  const queryParams = new URLSearchParams({
+    appId: config.appId,
+    businessId: config.businessId ?? '',
+  });
+  const url = `${NHANH_V3_END_POINT}${NHANH_PATH.ORDER_LIST}?${queryParams}`;
   const headers = NhanHelper.getHeaders(config);
-  const url = `${NHANH_V3_END_POINT}${NHANH_PATH.ORDER_LIST}`;
-  return NhanHelper.httpPost(url, commonParam, headers);
+  return NhanHelper.httpPost(url, params, headers);
 }

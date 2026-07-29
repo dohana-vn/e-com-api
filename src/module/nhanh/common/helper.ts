@@ -2,19 +2,7 @@ import { NhanhConfig } from '../dto';
 import axios, { AxiosResponse } from 'axios';
 
 function commonParameter(config, params) {
-  const { appId, version, businessId, accessToken } = config;
-
-  // Gom tất cả param lại thành object
-  const rawParams = {
-    appId: appId,
-    version,
-    businessId,
-    accessToken,
-    data: params, // ví dụ: page_size, page_token
-  };
-
-  // Loại bỏ undefined/null
-  return Object.fromEntries(Object.entries(rawParams).filter(([_, v]) => v !== undefined && v !== null));
+  return params;
 }
 
 function objKeySort(obj) {
@@ -30,9 +18,10 @@ function handleError(err: any) {
   return err.response ? err.response.data : { error: 'Unknown error' };
 }
 
-function getHeaders(config: NhanhConfig, contentType = 'application/json') {
+function getHeaders(config: NhanhConfig) {
   return {
-    'content-type': contentType,
+    'content-type': 'application/json',
+    Authorization: config.accessToken || '',
   };
 }
 
