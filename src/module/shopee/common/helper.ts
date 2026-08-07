@@ -1,6 +1,16 @@
 import { ShopeeConfig } from '../dto/request/config.request';
 import axios, { AxiosResponse } from 'axios';
 import { createHmac } from 'crypto';
+import { readFile } from 'fs/promises';
+import { basename, extname } from 'path';
+
+const SUPPORTED_IMAGE_MIME_TYPES: Record<string, string> = {
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+};
+
+const MAX_IMAGE_UPLOAD_SIZE = 10 * 1024 * 1024;
 
 function commonParameter(config: ShopeeConfig, signature: string, timestamp: number) {
   const { partnerId, accessToken, shopId } = config;
@@ -139,6 +149,17 @@ async function httpPost(url: string, body: any, headers: any) {
   }
 }
 
+async function httpPostMultipart(url: string, formData: FormData, headers?: Record<string, string>) {
+  try {
+    const res: AxiosResponse = await axios.post(url, formData, {
+      headers,
+    });
+    return res.data;
+  } catch (err: any) {
+    return handleError(err);
+  }
+}
+
 async function httpGet(url: string, config: ShopeeConfig) {
   try {
     const res: AxiosResponse = await axios.get(url, {
@@ -181,6 +202,31 @@ function buildOptionalParams(
   );
 }
 
+async function buildImageUploadFormData(returnSn: string, imagePath: string): Promise<FormData> {
+  const extension = extname(imagePath).toLowerCase();
+  const mimeType = SUPPORTED_IMAGE_MIME_TYPES[extension];
+
+  if (!mimeType) {
+    throw new Error('Shopee convert_image only supports .jpg, .jpeg, and .png files');
+  }
+
+  const imageBuffer = await readFile(imagePath);
+
+  if (imageBuffer.byteLength > MAX_IMAGE_UPLOAD_SIZE) {
+    throw new Error('Shopee convert_image only supports files up to 10MB');
+  }
+
+  const formData = new FormData();
+  formData.append('return_sn', returnSn);
+  formData.append(
+    'upload_image',
+    new Blob([imageBuffer], { type: mimeType }),
+    basename(imagePath),
+  );
+
+  return formData;
+}
+
 
 export {
   buildCommonParameters,
@@ -192,11 +238,13 @@ export {
   optionalField,
   httpGet,
   httpPost,
+  httpPostMultipart,
   getHeaders,
   buildCommonParams,
   isAccessTokenValid,
   isTokenExpired,
   refreshTokenExpire30Days,
   buildOptionalParams,
+  buildImageUploadFormData,
   buildCommonParametersWithTimeRange,
 };
