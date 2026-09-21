@@ -1,77 +1,94 @@
-import { NhanhResponseCommon } from './config.response';
-
-interface ParentAttribute {
-  id: number;
-  name: string;
+export interface NhanhProductPrice {
+  retail?: number;
+  retailVat?: number;
+  import_?: number;
+  importVat?: number;
+  old?: number;
+  wholesale?: number;
+  avgCost?: number;
 }
 
-interface Attribute {
-  attributeName: string;
-  id: number;
-  name: string;
-  order: number;
-  parent?: ParentAttribute; // optional vì có thể không có
+export interface NhanhProductImage {
+  avatar?: string;
+  others?: string[];
+}
+
+export interface NhanhProductShipping {
+  width?: number;
+  height?: number;
+  length?: number;
+  weight?: number;
+}
+
+export interface NhanhProductDepot {
+  id?: number;
+  remain?: number;
+  shipping?: number;
+  damaged?: number;
+  holding?: number;
+  transfering?: number;
+  available?: number;
+  warranty?: {
+    remain?: number;
+    holding?: number;
+  };
 }
 
 export interface NhanhProductInventory {
-  remain: number;           // số lượng tồn kho
-  shipping: number;         // số lượng đang giao hàng
-  holding: number;          // số lượng đang tạm giữ
-  damage: number;           // số lượng lỗi
-  available: number;        // số lượng có thể bán
-  warranty: number;         // số lượng bảo hành
-  warrantyHolding: number;  // số lượng đang bảo hành
+  remain?: number;
+  shipping?: number;
+  damaged?: number;
+  holding?: number;
+  transfering?: number;
+  available?: number;
+  warranty?: {
+    remain?: number;
+    holding?: number;
+  };
+  depots?: NhanhProductDepot[];
 }
 
-interface NhanhProduct {
-  idNhanh: bigint;
-  categoryId: number; // ID danh mục sản phẩm trên Nhanh.vn
-  internalCategoryId: number; // ID danh mục nội bộ trên Nhanh.vn
-  parentId: number; // -1 = Sản phẩm độc lập, hoặc -2 = Sản phẩm cha, hoặc -10 = Tất cả sản phẩm con
-  code: string;
-  name: string;
-  otherName: string; // Tên khác của sản phẩm
-  importPrice: number; // double
-  oldPrice: number; // double
-  price: number; // double
-  wholesalePrice: number; // double
-  vat: number; // % thuế giá trị gia tăng (VD: 10)
-  image: string;
-  images: any[];
-  status: string; //  Active | Inactive | OutOfStock
-  previewLink: string;
-  showHot: number; // (Giá trị 0 or 1) Sản phẩm được đánh dấu là sản phẩm hot
-  showNew: number; // (Giá trị 0 or 1) Sản phẩm được đánh dấu là sản phẩm mới
-  showHome: number; // (Giá trị 0 or 1) Sản phẩm được đánh dấu hiển thị ở trang chủ
-  width: number;
-  height: number;
-  warrantyAddress: string;
-  warrantyPhone: string;
-  warranty: number; // Số tháng bảo hành
-  length: number; // in cm
-  shippingWeight: number; // in gram
-  createdDateTime: Date; // định dạng yyyy-mm-dd hh:mm:ss
-  brandId: number;
-  brandName: string;
-  typeId: number;
-  typeName: string;
-  avgCost: number; // Giá vốn sản phẩm double
-  countryName: string;
-  unit: string;
-  importType: string;
-  importTypeLabel: string;
-  inventory?: NhanhProductInventory[];
-  attributes?: Record<string, Attribute>[];
-  updatedAt: number; // Ngày cập nhật sản phẩm (định dạng timestamp)
+export interface NhanhProductAttribute {
+  id?: number;
+  name?: string;
+  nameOther?: string;
+  value?: string;
+  code?: string;
+  codeOther?: string;
 }
 
-interface ProductSearchData {
-  totalPages: number;
-  products: NhanhProduct[];
+export interface NhanhProduct {
+  id: number;
+  parentId?: number;
+  code?: string;
+  barcode?: string;
+  name?: string;
+  otherName?: string;
+  status?: number;
+  priceVatMode?: number;
+  importPriceVatMode?: number;
+  categoryId?: number;
+  internalCategoryId?: number;
+  prices?: NhanhProductPrice;
+  images?: NhanhProductImage;
+  brandId?: number;
+  type?: number;
+  shipping?: NhanhProductShipping;
+  countryName?: string;
+  inventory?: NhanhProductInventory;
+  attributes?: NhanhProductAttribute[];
+  updatedAt?: number;
+  createdAt?: number;
 }
 
-type ResponseProductSearchData = NhanhResponseCommon<ProductSearchData>;
+export interface NhanhProductSearchPaginatorResponse {
+  next?: unknown;
+}
 
-export {
-  ResponseProductSearchData as NhanhResponseProductSearchData
+export interface NhanhResponseProductSearchData {
+  code: number;
+  paginator?: NhanhProductSearchPaginatorResponse;
+  data?: NhanhProduct[];
+  messages?: string;
+  errorCode?: string;
 }

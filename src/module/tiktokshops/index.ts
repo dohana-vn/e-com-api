@@ -1,4 +1,4 @@
-import { searchReturns } from './api/v2/return-refund.api';
+import { searchReturns, searchReturnsByUpdateTime } from './api/v2/return-refund.api';
 
 export * from './api/v2/authorization.api'
 export * from './dto/response'
@@ -99,6 +99,10 @@ export class TiktokModule {
 
   async searchReturnRefund(returnIds: string[], from: number, params: {page_size: number;page_token?: string}): Promise<ResponseReturnOrdersDataDto> {
     return await searchReturns(returnIds, from, params, this.config);
+  }
+
+  async searchReturnsByUpdateTime(updateTimeGe: number, updateTimeLt: number, params: {page_size: number;page_token?: string}): Promise<ResponseReturnOrdersDataDto> {
+    return await searchReturnsByUpdateTime(updateTimeGe, updateTimeLt, params, this.config);
   }
 
   async searchPackage(payload: TiktokRequestSearchPackage, params: { page_size: number; page_token?: string; sort_field?: string; sort_order?: string }): Promise<any> {
