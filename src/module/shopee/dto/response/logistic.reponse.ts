@@ -104,11 +104,20 @@ interface ShipOrder {
   error: string;
 }
 
+interface DownloadedFile {
+  buffer: Uint8Array;
+  contentType?: string;
+  contentDisposition?: string;
+  filename?: string;
+  contentLength?: number;
+}
+
 type ResponseShippingParameter = ShopeeResponseCommon<ShippingParameter>;
 type ResponseLogisticChannelList = ShopeeResponseCommon<LogisticChannelList>;
 type ResponseShipOrder = ShopeeResponseCommon<ShipOrder>;
 
 export {
+  DownloadedFile as ShopeeDownloadedFile,
   ResponseLogisticChannelList as ShopeeResponseLogisticChannelList,
   ResponseShippingParameter as ShopeeResponseShippingParameter,
   ResponseShipOrder as ShopeeResponseShipOrder,

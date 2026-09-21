@@ -1,9 +1,9 @@
 export * from './api/authorization.api'
 export * from './dto'
 import { ShopeeConfig } from './dto/request/config.request';
-import { 
-  getOrderDetail, 
-  getOrders, 
+import {
+  getOrderDetail,
+  getOrders,
   getOrderDetails
 } from './api/order.api';
 import {
@@ -27,12 +27,30 @@ import {
   ShopeeResponseUpdatePrice,
   ShopeeResponseUpdateStock,
 } from './dto/response/product.response';
-import { getChannelList, shipOrder, shippingParameter } from './api/logistic.api';
 import {
+  createShippingDocument,
+  downloadShippingDocument,
+  getShippingDocumentResult,
+  getChannelList,
+  shipOrder,
+  shippingParameter,
+} from './api/logistic.api';
+import {
+  ShopeeDownloadedFile,
   ShopeeResponseLogisticChannelList,
   ShopeeResponseShipOrder,
   ShopeeResponseShippingParameter,
 } from './dto/response/logistic.reponse';
+import {
+  convertReturnImage,
+  disputeReturn,
+  getAvailableSolutions,
+  getReturnDetail,
+  getReturnDisputeReason,
+  getReturnList,
+  queryReturnProof,
+  uploadReturnProof,
+} from './api/return-refund.api';
 import {
   fetchTokenWithAuthCode,
   fetchTokenWithRefreshToken,
@@ -40,10 +58,25 @@ import {
   getShopProfile,
 } from './api/authorization.api';
 import {
+  ShopeeRequestCreateShippingDocument,
+  ShopeeRequestDownloadShippingDocument,
+  ShopeeRequestGetShippingDocumentResult,
+  ShopeeConvertReturnImageRequest,
+  ShopeeDisputeReturnRequest,
+  ShopeeGetReturnListRequest,
+  ShopeeUploadReturnProofRequest,
+  ShopeeResponseDisputeReturn,
+  ShopeeResponseGetAvailableSolutions,
   ShopeeResponseRefreshAccessToken,
+  ShopeeResponseConvertReturnImage,
+  ShopeeResponseGetReturnDetail,
+  ShopeeResponseGetReturnDisputeReason,
+  ShopeeResponseGetReturnList,
+  ShopeeResponseQueryReturnProof,
   ShopeeResponseShopInfo,
   ShopeeResponseShopProfile,
-} from './dto/response/config.response';
+  ShopeeResponseUploadReturnProof,
+} from './dto';
 
 export class ShopeeModule {
   private readonly config: ShopeeConfig;
@@ -124,6 +157,24 @@ export class ShopeeModule {
     return await shipOrder(orderNumber, addressId, timeSlot, this.config);
   }
 
+  async createShippingDocument(
+    payload: ShopeeRequestCreateShippingDocument,
+  ): Promise<any> {
+    return await createShippingDocument(payload, this.config);
+  }
+
+  async getShippingDocumentResult(
+    payload: ShopeeRequestGetShippingDocumentResult,
+  ): Promise<any> {
+    return await getShippingDocumentResult(payload, this.config);
+  }
+
+  async downloadShippingDocument(
+    payload: ShopeeRequestDownloadShippingDocument,
+  ): Promise<ShopeeDownloadedFile | any> {
+    return await downloadShippingDocument(payload, this.config);
+  }
+
   async refreshToken(): Promise<ShopeeResponseRefreshAccessToken> {
     return await fetchTokenWithRefreshToken(this.config);
   }
@@ -134,5 +185,47 @@ export class ShopeeModule {
 
   async getShopInfo(): Promise<ShopeeResponseShopInfo> {
     return await getShopInfo(this.config);
+  }
+
+  async getReturnList(params: ShopeeGetReturnListRequest): Promise<ShopeeResponseGetReturnList> {
+    return await getReturnList(this.config, params);
+  }
+
+  async getReturnDetail(returnSn: string): Promise<ShopeeResponseGetReturnDetail> {
+    return await getReturnDetail(this.config, returnSn);
+  }
+
+  async getReturnDisputeReason(
+    returnSn: string,
+  ): Promise<ShopeeResponseGetReturnDisputeReason> {
+    return await getReturnDisputeReason(this.config, returnSn);
+  }
+
+  async getAvailableSolutions(
+    returnSn: string,
+  ): Promise<ShopeeResponseGetAvailableSolutions> {
+    return await getAvailableSolutions(this.config, returnSn);
+  }
+
+  async queryReturnProof(
+    returnSn: string,
+  ): Promise<ShopeeResponseQueryReturnProof> {
+    return await queryReturnProof(this.config, returnSn);
+  }
+
+  async convertReturnImage(params: ShopeeConvertReturnImageRequest): Promise<ShopeeResponseConvertReturnImage> {
+    return await convertReturnImage(this.config, params);
+  }
+
+  async uploadReturnProof(
+    params: ShopeeUploadReturnProofRequest,
+  ): Promise<ShopeeResponseUploadReturnProof> {
+    return await uploadReturnProof(this.config, params);
+  }
+
+  async disputeReturn(
+    params: ShopeeDisputeReturnRequest,
+  ): Promise<ShopeeResponseDisputeReturn> {
+    return await disputeReturn(this.config, params);
   }
 }

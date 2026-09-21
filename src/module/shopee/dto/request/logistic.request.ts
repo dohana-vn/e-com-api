@@ -16,4 +16,43 @@ interface RequestShipOrder {
   };
 }
 
+interface RequestDownloadShippingDocumentOrder {
+  order_sn: string;
+  package_number?: string;
+}
+
+interface RequestDownloadShippingDocument {
+  shipping_document_type?: string;
+  order_list: RequestDownloadShippingDocumentOrder[];
+}
+
+interface RequestGetShippingDocumentResultOrder {
+  order_sn: string;
+  package_number?: string;
+}
+
+interface RequestGetShippingDocumentResult {
+  shipping_document_type?: string;
+  order_list: RequestGetShippingDocumentResultOrder[];
+}
+
+interface RequestCreateShippingDocumentOrder {
+  order_sn: string;
+  package_number?: string;
+  tracking_number?: string;
+  shipping_document_type?: string;
+}
+
+interface RequestCreateShippingDocument {
+  order_list: RequestCreateShippingDocumentOrder[];
+}
+
 export { RequestShipOrder as ShopeeRequestShipOrder };
+export {
+  RequestCreateShippingDocument as ShopeeRequestCreateShippingDocument,
+  RequestCreateShippingDocumentOrder as ShopeeRequestCreateShippingDocumentOrder,
+  RequestDownloadShippingDocument as ShopeeRequestDownloadShippingDocument,
+  RequestDownloadShippingDocumentOrder as ShopeeRequestDownloadShippingDocumentOrder,
+  RequestGetShippingDocumentResult as ShopeeRequestGetShippingDocumentResult,
+  RequestGetShippingDocumentResultOrder as ShopeeRequestGetShippingDocumentResultOrder,
+};
