@@ -278,6 +278,8 @@ enum PATH {
   GENERATE_AUTH_LINK = '/oauth',
   PRODUCT_LIST = '/product/list',
   ORDER_LIST = '/order/list',
+  DEPOT_LIST = '/business/depot',
+  PRODUCT_INVENTORY = '/product/inventory',
 }
 
 export {
