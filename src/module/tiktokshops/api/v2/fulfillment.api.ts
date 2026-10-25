@@ -1,7 +1,12 @@
 import { TIKTOK_DOCUMENT_TYPE, TIKTOK_PATH_202309 } from '../../common/constant';
 import * as TiktokHelper from '../../common/helper';
 import { TiktokConfig } from '../../dto/request/config.request';
-import { TiktokResponsePackageTimeSlot } from '../../dto/response/fulfillment.response';
+import {
+  TiktokResponsePackageDetail,
+  TiktokResponsePackageShippingDocument,
+  TiktokResponsePackageTimeSlot,
+  TiktokShippingDocumentOptions,
+} from '../../dto/response/fulfillment.response';
 import { TiktokRequestSearchPackage, TiktokRequestShipPackage } from '../../dto/request/fulfillment.request';
 
 /**
@@ -11,7 +16,7 @@ import { TiktokRequestSearchPackage, TiktokRequestShipPackage } from '../../dto/
  * @param config - Tiktok API configuration.
  * @returns Promise of shipping package.
  */
-export async function detailPackage(packageId: string, config: TiktokConfig): Promise<any> {
+export async function detailPackage(packageId: string, config: TiktokConfig): Promise<TiktokResponsePackageDetail> {
   if (!packageId) {
     throw new Error('Invalid input: packageId are required');
   }
@@ -72,13 +77,28 @@ export async function shipPackage(packageId: string, payload: TiktokRequestShipP
   return TiktokHelper.httpPost(url, body, headers);
 }
 
-export async function getPackageShippingDocument(packageId: string, documentType: TIKTOK_DOCUMENT_TYPE, config: TiktokConfig) {
+export async function getPackageShippingDocument(
+  packageId: string,
+  documentType: TIKTOK_DOCUMENT_TYPE,
+  config: TiktokConfig,
+  options?: TiktokShippingDocumentOptions,
+): Promise<TiktokResponsePackageShippingDocument> {
   if (!packageId || !documentType) {
     throw new Error('Invalid input: packageId and documentType are required');
   }
 
   const timestamp = Math.floor(Date.now() / 1000);
-  const commonParam = `${TiktokHelper.commonParameter2(config, timestamp)}&document_type=${documentType}`;
+  let commonParam = `${TiktokHelper.commonParameter2(config, timestamp)}&document_type=${documentType}`;
+
+  if (options?.document_size) {
+    commonParam += `&document_size=${options.document_size}`;
+  }
+  if (options?.document_format) {
+    commonParam += `&document_format=${options.document_format}`;
+  }
+  if (options?.shipping_period) {
+    commonParam += `&shipping_period=${encodeURIComponent(options.shipping_period)}`;
+  }
 
   const pathShippingDocument = TiktokHelper.replacePackageId(TIKTOK_PATH_202309.PACKAGE_SHIPPING_DOCUMENT, packageId);
 
