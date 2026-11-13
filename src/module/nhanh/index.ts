@@ -1,4 +1,5 @@
 export * from './dto'
+export { NHANH_ORDER_STATUS, NHANH_ORDER_SALE_CHANNEL, NHANH_ORDER_CARRIER } from './common/constant'
 import { NhanhConfig, NhanhDepotListRequest, NhanhInventorySearchRequest, NhanhOrderListRequest, NhanhProductSearchRequest, NhanhResponseAccessToken, NhanhResponseDepotListData, NhanhResponseInventoryListData, NhanhResponseOrderList } from './dto';
 import * as AuthorizationApi from './api/authorization.api';
 import { getListProduct } from './api/product.api';

@@ -120,6 +120,26 @@ export enum CancelReason {
   COD_NOT_SUPPORTED = 'COD_NOT_SUPPORTED',
 }
 
+export interface ShopeeOrderPackageItem {
+  item_id: number;
+  model_id: number;
+  model_quantity?: number;
+  order_item_id?: number;
+  promotion_group_id?: number;
+  product_location_id?: string;
+}
+
+export interface ShopeeOrderPackage {
+  package_number: string;
+  logistics_status: string;
+  shipping_carrier: string;
+  logistics_channel_id?: number;
+  parcel_chargeable_weight_gram?: number;
+  allow_self_design_awb?: boolean;
+  sorting_group?: string;
+  item_list?: ShopeeOrderPackageItem[];
+}
+
 export interface ShopeeOrder {
   /**
    * Shopee's unique identifier for an order.
@@ -254,4 +274,8 @@ export interface ShopeeOrder {
    * Cross-border tax imposed by the Indonesian government on sellers.
    */
   escrow_tax: number;
+  /**
+   * Package breakdown list returned when response_optional_fields includes package_list.
+   */
+  package_list?: ShopeeOrderPackage[];
 }
