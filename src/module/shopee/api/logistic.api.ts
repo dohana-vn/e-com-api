@@ -3,9 +3,6 @@ import { SHOPEE_END_POINT, SHOPEE_PATH } from '../common/constant';
 import { ShopeeConfig } from '../dto/request/config.request';
 import {
   ShopeeDownloadedFile,
-  ShopeeResponseCreateShippingDocument,
-  ShopeeResponseGetShippingDocumentParameter,
-  ShopeeResponseGetShippingDocumentResult,
   ShopeeResponseLogisticChannelList,
   ShopeeResponseShipOrder,
   ShopeeResponseShippingParameter,
@@ -13,7 +10,6 @@ import {
 import {
   ShopeeRequestCreateShippingDocument,
   ShopeeRequestDownloadShippingDocument,
-  ShopeeRequestGetShippingDocumentParameter,
   ShopeeRequestGetShippingDocumentResult,
   ShopeeRequestShipOrder,
 } from '../dto/request/logistic.request';
@@ -196,49 +192,15 @@ export async function getMassTrackingNumber(
 }
 
 /**
- * Query selectable & suggested shipping document types for up to 50 orders.
- * @param payload - Orders to inspect shipping document parameters.
- * @param config - Shopee API configuration.
- */
-export async function getShippingDocumentParameter(
-  payload: ShopeeRequestGetShippingDocumentParameter,
-  config: ShopeeConfig,
-): Promise<ShopeeResponseGetShippingDocumentParameter> {
-  const timestamp = ShopeeHelper.getTimestampNow();
-  const signature = ShopeeHelper.signRequest(
-    SHOPEE_PATH.GET_SHIPPING_DOCUMENT_PARAMETER,
-    config,
-    timestamp,
-  );
-
-  const commonParam = ShopeeHelper.buildCommonParams(
-    config,
-    signature,
-    timestamp,
-  );
-
-  const body: ShopeeRequestGetShippingDocumentParameter = {
-    order_list: payload.order_list.map((order) => ({
-      order_sn: order.order_sn,
-      ...(order.package_number ? { package_number: order.package_number } : {}),
-    })),
-  };
-
-  const url = `${SHOPEE_END_POINT}${SHOPEE_PATH.GET_SHIPPING_DOCUMENT_PARAMETER}${commonParam}`;
-
-  return ShopeeHelper.httpPost(url, body, config);
-}
-
-/**
  *
  * @param payload - Shipping document task payload.
  * @param config - Shopee API configuration.
- * @returns {Promise<ShopeeResponseCreateShippingDocument>}
+ * @returns {Promise<any>}
  */
 export async function createShippingDocument(
   payload: ShopeeRequestCreateShippingDocument,
   config: ShopeeConfig,
-): Promise<ShopeeResponseCreateShippingDocument | any> {
+): Promise<any> {
   const timestamp = ShopeeHelper.getTimestampNow();
   const signature = ShopeeHelper.signRequest(
     SHOPEE_PATH.CREATE_SHIPPING_DOCUMENTS,
@@ -272,12 +234,12 @@ export async function createShippingDocument(
  *
  * @param payload - Shipping document task query payload.
  * @param config - Shopee API configuration.
- * @returns {Promise<ShopeeResponseGetShippingDocumentResult>}
+ * @returns {Promise<any>}
  */
 export async function getShippingDocumentResult(
   payload: ShopeeRequestGetShippingDocumentResult,
   config: ShopeeConfig,
-): Promise<ShopeeResponseGetShippingDocumentResult | any> {
+): Promise<any> {
   const timestamp = ShopeeHelper.getTimestampNow();
   const signature = ShopeeHelper.signRequest(
     SHOPEE_PATH.GET_SHIPPING_DOCUMENTS,
@@ -343,3 +305,4 @@ export async function downloadShippingDocument(
 
   return ShopeeHelper.httpPostDownload(url, body, config);
 }
+

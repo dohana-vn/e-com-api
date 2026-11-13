@@ -36,15 +36,6 @@ interface RequestGetShippingDocumentResult {
   order_list: RequestGetShippingDocumentResultOrder[];
 }
 
-interface RequestGetShippingDocumentParameterOrder {
-  order_sn: string;
-  package_number?: string;
-}
-
-interface RequestGetShippingDocumentParameter {
-  order_list: RequestGetShippingDocumentParameterOrder[];
-}
-
 interface RequestCreateShippingDocumentOrder {
   order_sn: string;
   package_number?: string;
@@ -58,8 +49,6 @@ interface RequestCreateShippingDocument {
 
 export { RequestShipOrder as ShopeeRequestShipOrder };
 export {
-  RequestGetShippingDocumentParameter as ShopeeRequestGetShippingDocumentParameter,
-  RequestGetShippingDocumentParameterOrder as ShopeeRequestGetShippingDocumentParameterOrder,
   RequestCreateShippingDocument as ShopeeRequestCreateShippingDocument,
   RequestCreateShippingDocumentOrder as ShopeeRequestCreateShippingDocumentOrder,
   RequestDownloadShippingDocument as ShopeeRequestDownloadShippingDocument,

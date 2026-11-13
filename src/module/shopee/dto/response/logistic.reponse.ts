@@ -112,61 +112,13 @@ interface DownloadedFile {
   contentLength?: number;
 }
 
-interface ShippingDocumentParameterResultItem {
-  order_sn: string;
-  package_number?: string;
-  suggest_shipping_document_type?: string;
-  selectable_shipping_document_type?: string[];
-  fail_error?: string;
-  fail_message?: string;
-}
-
-interface ShippingDocumentParameterData {
-  result_list: ShippingDocumentParameterResultItem[];
-}
-
-interface ShippingDocumentResultItem {
-  order_sn: string;
-  package_number?: string;
-  status?: 'READY' | 'FAILED' | 'PROCESSING' | string;
-  fail_error?: string;
-  fail_message?: string;
-}
-
-interface ShippingDocumentResultData {
-  result_list: ShippingDocumentResultItem[];
-}
-
-interface CreateShippingDocumentResultItem {
-  order_sn: string;
-  package_number?: string;
-  fail_error?: string;
-  fail_message?: string;
-}
-
-interface CreateShippingDocumentData {
-  result_list?: CreateShippingDocumentResultItem[];
-}
-
 type ResponseShippingParameter = ShopeeResponseCommon<ShippingParameter>;
 type ResponseLogisticChannelList = ShopeeResponseCommon<LogisticChannelList>;
 type ResponseShipOrder = ShopeeResponseCommon<ShipOrder>;
-type ResponseGetShippingDocumentParameter = ShopeeResponseCommon<ShippingDocumentParameterData>;
-type ResponseGetShippingDocumentResult = ShopeeResponseCommon<ShippingDocumentResultData>;
-type ResponseCreateShippingDocument = ShopeeResponseCommon<CreateShippingDocumentData>;
 
 export {
   DownloadedFile as ShopeeDownloadedFile,
   ResponseLogisticChannelList as ShopeeResponseLogisticChannelList,
   ResponseShippingParameter as ShopeeResponseShippingParameter,
   ResponseShipOrder as ShopeeResponseShipOrder,
-  ShippingDocumentParameterResultItem as ShopeeShippingDocumentParameterResultItem,
-  ShippingDocumentParameterData as ShopeeShippingDocumentParameterData,
-  ResponseGetShippingDocumentParameter as ShopeeResponseGetShippingDocumentParameter,
-  ShippingDocumentResultItem as ShopeeShippingDocumentResultItem,
-  ShippingDocumentResultData as ShopeeShippingDocumentResultData,
-  ResponseGetShippingDocumentResult as ShopeeResponseGetShippingDocumentResult,
-  CreateShippingDocumentResultItem as ShopeeCreateShippingDocumentResultItem,
-  CreateShippingDocumentData as ShopeeCreateShippingDocumentData,
-  ResponseCreateShippingDocument as ShopeeResponseCreateShippingDocument,
 };
