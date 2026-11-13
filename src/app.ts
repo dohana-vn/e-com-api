@@ -7,3 +7,5 @@ export * from './module/shopee/api/product.api';
 export * from './module/shopee/api/order.api';
 export * from './module/shopee/api/return-refund.api';
 export * from './module/shopee/api/logistic.api';
+export * from './common/shipping-print.helper';
+export * from './common/shipping-print.api';
