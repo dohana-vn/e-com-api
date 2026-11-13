@@ -73,6 +73,7 @@ enum PATH {
   AUTH_TOKEN = '/api/v2/auth/token/get',
   REFRESH_TOKEN = '/api/v2/auth/access_token/get',
   GET_SHIPPING_DOCUMENTS = '/api/v2/logistics/get_shipping_document_result',
+  GET_SHIPPING_DOCUMENT_PARAMETER = '/api/v2/logistics/get_shipping_document_parameter',
   CREATE_SHIPPING_DOCUMENTS = '/api/v2/logistics/create_shipping_document',
   TRACKING_INFO = '/api/v2/logistics/get_tracking_info',
   DOWNLOAD_SHIPPING_DOCUMENT = '/api/v2/logistics/download_shipping_document',
