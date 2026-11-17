@@ -1,5 +1,6 @@
 export * from './api/authorization.api'
 export * from './dto'
+export * from './common/shipping-print.helper'
 export {
   SHOPEE_ORDER_STATUS,
   SHOPEE_LOGISTICS_STATUS,

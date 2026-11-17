@@ -2,6 +2,7 @@ import { searchReturns, searchReturnsByUpdateTime } from './api/v2/return-refund
 
 export * from './api/v2/authorization.api'
 export * from './dto/response'
+export * from './common/shipping-print.helper'
 export { TIKTOK_DOCUMENT_TYPE, TIKTOK_ORDER_STATUS } from './common/constant'
 export * from './dto/response/fulfillment.response'
 import { getOrderDetail, getOrderList, getOrderListByRange, getOrdersByCreateTimeRange } from './api/v2/order.api';
