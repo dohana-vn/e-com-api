@@ -69,6 +69,8 @@ export function checkShopeeEligibility(
   };
 }
 
+export const isShopeeOrderPrintable = checkShopeeEligibility;
+
 export interface ShopeeChunkGroup<T> {
   shopId: string;
   shippingDocumentType: SHOPEE_SHIPPING_DOCUMENT_TYPE | string;
@@ -111,6 +113,52 @@ export function chunkShopeePrintOrders<
   }
 
   return chunks;
+}
+
+export type DownloadedDocumentFormat = 'PDF' | 'ZIP' | 'PNG' | 'ZPL' | 'UNKNOWN';
+
+/**
+ * Detect actual binary format of downloaded shipping document via magic bytes.
+ */
+export function detectDownloadedDocumentFormat(
+  bytes: Uint8Array,
+): DownloadedDocumentFormat {
+  if (!bytes || bytes.length < 2) {
+    return 'UNKNOWN';
+  }
+  // %PDF
+  if (
+    bytes.length >= 4 &&
+    bytes[0] === 0x25 &&
+    bytes[1] === 0x50 &&
+    bytes[2] === 0x44 &&
+    bytes[3] === 0x46
+  ) {
+    return 'PDF';
+  }
+  // PK (ZIP archive)
+  if (bytes[0] === 0x50 && bytes[1] === 0x4b) {
+    return 'ZIP';
+  }
+  // PNG
+  if (
+    bytes.length >= 4 &&
+    bytes[0] === 0x89 &&
+    bytes[1] === 0x50 &&
+    bytes[2] === 0x4e &&
+    bytes[3] === 0x47
+  ) {
+    return 'PNG';
+  }
+  // ZPL (^XA)
+  const headText = Buffer.from(bytes.subarray(0, Math.min(bytes.length, 64)))
+    .toString('utf8')
+    .trimStart();
+  if (headText.startsWith('^XA')) {
+    return 'ZPL';
+  }
+
+  return 'UNKNOWN';
 }
 
 export interface ShopeeResultPartition<T> {

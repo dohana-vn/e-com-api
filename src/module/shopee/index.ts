@@ -1,6 +1,7 @@
 export * from './api/authorization.api'
 export * from './dto'
 export * from './common/shipping-print.helper'
+export * from './api/logistic.api'
 export {
   SHOPEE_ORDER_STATUS,
   SHOPEE_LOGISTICS_STATUS,
@@ -42,7 +43,16 @@ import {
   getChannelList,
   shipOrder,
   shippingParameter,
+  fetchShopeeBatchShippingDocuments,
+  ShopeePrintOrderInput,
+  FetchShopeePrintOptions,
+  ShopeeBatchPrintResult,
 } from './api/logistic.api';
+import {
+  isShopeeOrderPrintable,
+  ShopeePrintEligibilityCandidate,
+  ShopeePrintEligibilityResult,
+} from './common/shipping-print.helper';
 import {
   ShopeeDownloadedFile,
   ShopeeResponseCreateShippingDocument,
@@ -191,6 +201,20 @@ export class ShopeeModule {
     payload: ShopeeRequestDownloadShippingDocument,
   ): Promise<ShopeeDownloadedFile | any> {
     return await downloadShippingDocument(payload, this.config);
+  }
+
+  async getBatchShippingDocuments(
+    orders: ShopeePrintOrderInput[],
+    options?: FetchShopeePrintOptions,
+  ): Promise<ShopeeBatchPrintResult> {
+    return await fetchShopeeBatchShippingDocuments(orders, this.config, options);
+  }
+
+  isOrderPrintable(
+    order: ShopeePrintEligibilityCandidate,
+    allowReprint?: boolean,
+  ): ShopeePrintEligibilityResult {
+    return isShopeeOrderPrintable(order, allowReprint);
   }
 
   async refreshToken(): Promise<ShopeeResponseRefreshAccessToken> {

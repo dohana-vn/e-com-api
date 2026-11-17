@@ -77,3 +77,5 @@ export function checkNhanhEligibility(
     recommendedStrategy: shouldDelegateToPlatform ? 'PLATFORM_DELEGATION' : 'SELF_RENDER_PDF',
   };
 }
+
+export const isNhanhOrderPrintable = checkNhanhEligibility;

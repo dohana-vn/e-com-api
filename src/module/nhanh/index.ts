@@ -7,6 +7,12 @@ import { getListProduct } from './api/product.api';
 import { getOrderList } from './api/order.api';
 import { getDepotList } from './api/depot.api';
 import { getInventoryList } from './api/inventory.api';
+import {
+  isNhanhOrderPrintable,
+  NhanhPrintEligibilityCandidate,
+  NhanhPrintEligibilityOptions,
+  NhanhPrintEligibilityResult,
+} from './common/shipping-print.helper';
 
 export class NhanhModule {
   private config: NhanhConfig;
@@ -47,5 +53,12 @@ export class NhanhModule {
 
   async getInventoryList({ params }: { params: NhanhInventorySearchRequest }): Promise<NhanhResponseInventoryListData> {
     return await getInventoryList(params, this.config);
+  }
+
+  isOrderPrintable(
+    order: NhanhPrintEligibilityCandidate,
+    options?: NhanhPrintEligibilityOptions,
+  ): NhanhPrintEligibilityResult {
+    return isNhanhOrderPrintable(order, options);
   }
 }

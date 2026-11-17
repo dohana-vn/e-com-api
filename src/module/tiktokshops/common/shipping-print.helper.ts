@@ -68,6 +68,8 @@ export function checkTiktokEligibility(
   };
 }
 
+export const isTiktokOrderPrintable = checkTiktokEligibility;
+
 export interface TiktokPackageDedupResult<T> {
   uniqueItems: T[];
   skippedDuplicates: Array<{ item: T; sharedPackageId: string }>;

@@ -1,45 +1,49 @@
-# 🚀 PR: Triển khai tính năng In phiếu vận chuyển đa sàn (Shopee, TikTok, Nhanh.vn)
+# 🚀 PR: Triển khai tính năng In phiếu vận chuyển theo từng module sàn (Shopee, TikTok, Nhanh.vn)
 
 ## 📌 Tóm tắt ngắn gọn
-Pull Request này bổ sung trọn vẹn bộ tính năng in phiếu vận chuyển (Shipping Label) cho 3 sàn: **Shopee, TikTok Shop, Nhanh.vn**.
-- **Phong cách code:** Tách biệt module độc lập (**Modular Design**). Mỗi sàn có file `shipping-print.helper.ts` riêng đặt trong thư mục của sàn đó.
-- **Tầng dùng chung (`src/common/`):** Cung cấp bộ điều phối switch-case tổng hợp (`shipping-print.helper.ts` & `shipping-print.api.ts`).
-- **Phía Backend (BE chính):** Chỉ cần gọi đúng 1-2 hàm là xong, không cần quan tâm các bước phức tạp bên dưới.
+Pull Request này triển khai trọn vẹn giải pháp in phiếu vận chuyển (Shipping Label) **chuẩn 100% theo kiến trúc module gốc của codebase**:
+- **Không dùng Switch-Case tập trung**, xóa bỏ hoàn toàn thư mục `src/common/`.
+- **Mỗi sàn độc lập (Modular SDK):** Toàn bộ hàm in ấn, kiểm tra điều kiện in, gộp kiện, chia mẻ được đặt trực tiếp trong module của từng sàn (`src/module/shopee`, `src/module/tiktokshops`, `src/module/nhanh`).
+- **Phía Backend (BE chính):** Làm việc trực tiếp với module của sàn tương ứng (`ShopeeModule`, `TiktokModule`, `NhanhModule`).
 
 ---
 
-## 🛠️ Danh sách chi tiết các file và hàm
+## 🛠️ Chi tiết triển khai theo từng module
 
-### 1. Nhóm Helper riêng theo từng sàn (High Modularity)
+### 1. Module Shopee (`src/module/shopee/`)
+* **Logic Helper (`src/module/shopee/common/shipping-print.helper.ts`):**
+  * `isShopeeOrderPrintable`: Kiểm tra điều kiện đơn Shopee được phép in (`PROCESSED`, `RETRY_SHIP`, có mã vận đơn).
+  * `chunkShopeePrintOrders`: Tự động gom theo Shop ID và cắt nhỏ mảng đơn thành các mẻ tối đa 50 đơn/lần (chuẩn trần của Shopee).
+  * `partitionShopeeDocumentResult`: Phân loại kết quả Shopee thành 3 nhóm rõ ràng (`readyOrders`, `failedOrders`, `processingOrders`).
+  * `detectDownloadedDocumentFormat`: Quét mã Magic Bytes (`%PDF`, `PK`, `^XA`) nhận diện chính xác định dạng file nhị phân tải về.
+* **API In mẻ hoàn chỉnh (`src/module/shopee/api/logistic.api.ts`):**
+  * `fetchShopeeBatchShippingDocuments` (alias `getBatchShippingDocuments`): Gửi lệnh in mẻ ➔ Polling chờ Shopee render (tự ngắt khi sai token) ➔ Tải file ➔ Quét Magic Bytes ➔ Gọi hook `uploadFile` (S3/MinIO nếu BE cấu hình).
+* **ShopeeModule (`src/module/shopee/index.ts`):**
+  * Bổ sung method: `shopee.getBatchShippingDocuments(orders, options)`
+  * Bổ sung method: `shopee.isOrderPrintable(order, allowReprint)`
 
-#### A. Shopee (`src/module/shopee/common/shipping-print.helper.ts`)
-* **`checkShopeeEligibility`**: Kiểm tra điều kiện đơn Shopee được phép in (`PROCESSED`, `RETRY_SHIP`, có mã vận đơn).
-* **`chunkShopeePrintOrders`**: Tự động gom theo Shop ID và cắt nhỏ mảng đơn thành các mẻ tối đa 50 đơn/lần (chuẩn Shopee Open API).
-* **`partitionShopeeDocumentResult`**: Bóc tách danh sách kết quả Shopee thành 3 nhóm rõ ràng: đơn thành công (`readyOrders`), đơn thất bại kèm lý do (`failedOrders`), và đơn đang chờ sàn render (`processingOrders`).
+### 2. Module TikTok Shop (`src/module/tiktokshops/`)
+* **Logic Helper (`src/module/tiktokshops/common/shipping-print.helper.ts`):**
+  * `isTiktokOrderPrintable`: Kiểm tra điều kiện đơn TikTok (`AWAITING_COLLECTION`, `PARTIALLY_SHIPPING`, chặn đơn FBT).
+  * `dedupeTiktokPackages`: Lọc trùng kiện hàng khi nhiều đơn gộp chung 1 kiện (`packageId`), đảm bảo máy in chỉ nhả ra **đúng 1 phiếu in**, chống lãng phí giấy.
+* **API In (`src/module/tiktokshops/api/v2/fulfillment.api.ts`):**
+  * `fetchTiktokShippingDocumentUrl` (alias `getShippingDocumentUrl`): Lấy link URL tải tem in theo `packageId` (hỗ trợ `PDF`, `PNG`, `ZPL`).
+* **TiktokModule (`src/module/tiktokshops/index.ts`):**
+  * Bổ sung method: `tiktok.getShippingDocumentUrl(packageId, options)`
+  * Bổ sung method: `tiktok.isOrderPrintable(order, allowReprint)`
 
-#### B. TikTok Shop (`src/module/tiktokshops/common/shipping-print.helper.ts`)
-* **`checkTiktokEligibility`**: Kiểm tra điều kiện in của TikTok (`AWAITING_COLLECTION`, `PARTIALLY_SHIPPING`, kiểm tra không phải đơn FBT).
-* **`dedupeTiktokPackages`**: Lọc trùng kiện hàng TikTok khi nhiều đơn gộp chung 1 kiện (`packageId`), đảm bảo máy in chỉ nhả ra **đúng 1 phiếu in duy nhất**, chống lãng phí giấy.
-
-#### C. Nhanh.vn (`src/module/nhanh/common/shipping-print.helper.ts`)
-* **`checkNhanhEligibility`**: Kiểm tra trạng thái đơn Nhanh (`CONFIRMED`, `PACKING`, `PACKED`, `AWAITING_COLLECTION`) và mã vận đơn `carrierCode`. Phân luồng đơn sàn (uỷ quyền in qua Shopee/TikTok) vs đơn bán lẻ (in khổ A6).
-
----
-
-### 2. Nhóm Điều phối & Gọi API dùng chung (`src/common/`)
-
-#### A. Điều phối Logic (`src/common/shipping-print.helper.ts`)
-* **`isOrderPrintable`**: Cửa ngõ kiểm tra đơn in tổng hợp, dùng switch-case gọi xuống đúng helper của từng sàn tương ứng.
-* **`detectDownloadedDocumentFormat`**: Soi "dấu vân tay" nhị phân (Magic Bytes) đầu file (`%PDF` -> PDF, `PK` -> ZIP, `^XA` -> ZPL in nhiệt) để nhận diện chuẩn xác định dạng file tải về.
-
-#### B. Gọi API & Mạng (`src/common/shipping-print.api.ts`)
-* **`getShippingPrintDocument`**: Cửa ngõ lấy tài liệu in đa sàn (Router switch-case).
-* **`fetchTiktokShippingDocumentUrl`**: Gọi API TikTok lấy link URL tải tem vận chuyển.
-* **`fetchShopeeBatchShippingDocuments`**: Gửi lệnh in mẻ lên Shopee ➔ Polling chờ render ➔ Bắt lỗi token ➔ Tải file ➔ Quét Magic Bytes.
-* **`uploadFile` Hook**: Cổng cắm callback linh hoạt để BE đẩy file lên S3/MinIO lấy link URL trực tiếp.
+### 3. Module Nhanh.vn (`src/module/nhanh/`)
+* **Logic Helper (`src/module/nhanh/common/shipping-print.helper.ts`):**
+  * `isNhanhOrderPrintable`: Kiểm tra trạng thái đơn Nhanh và mã vận đơn `carrierCode`. Phân luồng đơn sàn (uỷ quyền in qua Shopee/TikTok) vs đơn bán lẻ (in khổ A6).
+* **NhanhModule (`src/module/nhanh/index.ts`):**
+  * Bổ sung method: `nhanh.isOrderPrintable(order, options)`
 
 ---
 
 ## 🧪 Kết quả Kiểm thử (Unit Tests)
-Đã viết đầy đủ **13/13 test cases** kiểm tra toàn bộ luồng nghiệp vụ và trường hợp biên (edge cases).
+Đã tổ chức lại bộ test độc lập theo từng sàn tại thư mục `test/`:
+* `test/shopee-shipping-print.test.mjs`: Test Shopee batch size, polling, partition, format detection, order printable.
+* `test/tiktok-shipping-print.test.mjs`: Test TikTok packageId validation, dedupe package, order printable rules.
+* `test/nhanh-shipping-print.test.mjs`: Test Nhanh.vn order printable strategies.
+
 👉 **Toàn bộ 13/13 tests đều chạy thành công (PASS 100%).**

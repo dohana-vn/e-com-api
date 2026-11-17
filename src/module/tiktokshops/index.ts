@@ -3,13 +3,28 @@ import { searchReturns, searchReturnsByUpdateTime } from './api/v2/return-refund
 export * from './api/v2/authorization.api'
 export * from './dto/response'
 export * from './common/shipping-print.helper'
+export * from './api/v2/fulfillment.api'
 export { TIKTOK_DOCUMENT_TYPE, TIKTOK_ORDER_STATUS } from './common/constant'
 export * from './dto/response/fulfillment.response'
 import { getOrderDetail, getOrderList, getOrderListByRange, getOrdersByCreateTimeRange } from './api/v2/order.api';
 import { TiktokConfig } from './dto/request/config.request';
 import { fetchTokenWithTiktokAuthCode, getAuthorizedShop, refreshToken } from './api/v2/authorization.api';
 import { createProduct, getAttributes, getBrands, getCategories, getListProduct, getProductDetail } from './api/v2/product.api';
-import {detailPackage, getPackageShippingDocument, getPackageTimeSlots, searchPackage, shipPackage} from './api/v2/fulfillment.api';
+import {
+  detailPackage,
+  getPackageShippingDocument,
+  getPackageTimeSlots,
+  searchPackage,
+  shipPackage,
+  fetchTiktokShippingDocumentUrl,
+  FetchTiktokPrintOptions,
+  TiktokPrintResult,
+} from './api/v2/fulfillment.api';
+import {
+  isTiktokOrderPrintable,
+  TiktokPrintEligibilityCandidate,
+  TiktokPrintEligibilityResult,
+} from './common/shipping-print.helper';
 import { TiktokRequestSearchPackage, TiktokRequestShipPackage } from './dto/request/fulfillment.request';
 import { TIKTOK_DOCUMENT_TYPE } from './common/constant';
 import { TiktokResponseAttributes, TiktokResponseBrands, TiktokResponseCategories } from './dto/response/product.response';
@@ -83,6 +98,20 @@ export class TiktokModule {
     options?: TiktokShippingDocumentOptions,
   ): Promise<TiktokResponsePackageShippingDocument> {
     return await getPackageShippingDocument(packageId, documentType, this.config, options);
+  }
+
+  async getShippingDocumentUrl(
+    packageId: string,
+    options?: FetchTiktokPrintOptions,
+  ): Promise<TiktokPrintResult> {
+    return await fetchTiktokShippingDocumentUrl(packageId, this.config, options);
+  }
+
+  isOrderPrintable(
+    order: TiktokPrintEligibilityCandidate,
+    allowReprint?: boolean,
+  ): TiktokPrintEligibilityResult {
+    return isTiktokOrderPrintable(order, allowReprint);
   }
 
   async getCategories(): Promise<TiktokResponseCategories> {
