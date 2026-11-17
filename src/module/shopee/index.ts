@@ -1,5 +1,14 @@
 export * from './api/authorization.api'
 export * from './dto'
+export * from './common/shipping-print.helper'
+export * from './api/shipping-print.api'
+export * from './api/logistic.api'
+export {
+  SHOPEE_ORDER_STATUS,
+  SHOPEE_LOGISTICS_STATUS,
+  SHOPEE_SHIPPING_DOCUMENT_TYPE,
+  SHOPEE_STATUS_SHIPPING_DOCUMENT,
+} from './common/constant';
 import { ShopeeConfig } from './dto/request/config.request';
 import {
   getOrderDetail,
@@ -30,13 +39,28 @@ import {
 import {
   createShippingDocument,
   downloadShippingDocument,
+  getShippingDocumentParameter,
   getShippingDocumentResult,
   getChannelList,
   shipOrder,
   shippingParameter,
 } from './api/logistic.api';
 import {
+  fetchShopeeBatchShippingDocuments,
+  ShopeePrintOrderInput,
+  FetchShopeePrintOptions,
+  ShopeeBatchPrintResult,
+} from './api/shipping-print.api';
+import {
+  isShopeeOrderPrintable,
+  ShopeePrintEligibilityCandidate,
+  ShopeePrintEligibilityResult,
+} from './common/shipping-print.helper';
+import {
   ShopeeDownloadedFile,
+  ShopeeResponseCreateShippingDocument,
+  ShopeeResponseGetShippingDocumentParameter,
+  ShopeeResponseGetShippingDocumentResult,
   ShopeeResponseLogisticChannelList,
   ShopeeResponseShipOrder,
   ShopeeResponseShippingParameter,
@@ -60,6 +84,7 @@ import {
 import {
   ShopeeRequestCreateShippingDocument,
   ShopeeRequestDownloadShippingDocument,
+  ShopeeRequestGetShippingDocumentParameter,
   ShopeeRequestGetShippingDocumentResult,
   ShopeeConvertReturnImageRequest,
   ShopeeDisputeReturnRequest,
@@ -157,15 +182,21 @@ export class ShopeeModule {
     return await shipOrder(orderNumber, addressId, timeSlot, this.config);
   }
 
+  async getShippingDocumentParameter(
+    payload: ShopeeRequestGetShippingDocumentParameter,
+  ): Promise<ShopeeResponseGetShippingDocumentParameter> {
+    return await getShippingDocumentParameter(payload, this.config);
+  }
+
   async createShippingDocument(
     payload: ShopeeRequestCreateShippingDocument,
-  ): Promise<any> {
+  ): Promise<ShopeeResponseCreateShippingDocument | any> {
     return await createShippingDocument(payload, this.config);
   }
 
   async getShippingDocumentResult(
     payload: ShopeeRequestGetShippingDocumentResult,
-  ): Promise<any> {
+  ): Promise<ShopeeResponseGetShippingDocumentResult | any> {
     return await getShippingDocumentResult(payload, this.config);
   }
 
@@ -173,6 +204,20 @@ export class ShopeeModule {
     payload: ShopeeRequestDownloadShippingDocument,
   ): Promise<ShopeeDownloadedFile | any> {
     return await downloadShippingDocument(payload, this.config);
+  }
+
+  async getBatchShippingDocuments(
+    orders: ShopeePrintOrderInput[],
+    options?: FetchShopeePrintOptions,
+  ): Promise<ShopeeBatchPrintResult> {
+    return await fetchShopeeBatchShippingDocuments(orders, this.config, options);
+  }
+
+  isOrderPrintable(
+    order: ShopeePrintEligibilityCandidate,
+    allowReprint?: boolean,
+  ): ShopeePrintEligibilityResult {
+    return isShopeeOrderPrintable(order, allowReprint);
   }
 
   async refreshToken(): Promise<ShopeeResponseRefreshAccessToken> {

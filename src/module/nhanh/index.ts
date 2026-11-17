@@ -1,10 +1,23 @@
 export * from './dto'
+export * from './common/shipping-print.helper'
+export * from './api/shipping-print.api'
+export { NHANH_ORDER_STATUS, NHANH_ORDER_SALE_CHANNEL, NHANH_ORDER_CARRIER } from './common/constant'
 import { NhanhConfig, NhanhDepotListRequest, NhanhInventorySearchRequest, NhanhOrderListRequest, NhanhProductSearchRequest, NhanhResponseAccessToken, NhanhResponseDepotListData, NhanhResponseInventoryListData, NhanhResponseOrderList } from './dto';
 import * as AuthorizationApi from './api/authorization.api';
 import { getListProduct } from './api/product.api';
 import { getOrderList } from './api/order.api';
 import { getDepotList } from './api/depot.api';
 import { getInventoryList } from './api/inventory.api';
+import {
+  isNhanhOrderPrintable,
+  NhanhPrintEligibilityCandidate,
+  NhanhPrintEligibilityOptions,
+  NhanhPrintEligibilityResult,
+} from './common/shipping-print.helper';
+import {
+  fetchNhanhShippingDocument,
+  NhanhPrintResult,
+} from './api/shipping-print.api';
 
 export class NhanhModule {
   private config: NhanhConfig;
@@ -45,5 +58,16 @@ export class NhanhModule {
 
   async getInventoryList({ params }: { params: NhanhInventorySearchRequest }): Promise<NhanhResponseInventoryListData> {
     return await getInventoryList(params, this.config);
+  }
+
+  isOrderPrintable(
+    order: NhanhPrintEligibilityCandidate,
+    options?: NhanhPrintEligibilityOptions,
+  ): NhanhPrintEligibilityResult {
+    return isNhanhOrderPrintable(order, options);
+  }
+
+  async getShippingDocument(orderData: any): Promise<NhanhPrintResult> {
+    return await fetchNhanhShippingDocument(orderData, this.config);
   }
 }
