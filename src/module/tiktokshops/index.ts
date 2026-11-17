@@ -3,6 +3,7 @@ import { searchReturns, searchReturnsByUpdateTime } from './api/v2/return-refund
 export * from './api/v2/authorization.api'
 export * from './dto/response'
 export * from './common/shipping-print.helper'
+export * from './api/shipping-print.api'
 export * from './api/v2/fulfillment.api'
 export { TIKTOK_DOCUMENT_TYPE, TIKTOK_ORDER_STATUS } from './common/constant'
 export * from './dto/response/fulfillment.response'
@@ -16,10 +17,12 @@ import {
   getPackageTimeSlots,
   searchPackage,
   shipPackage,
+} from './api/v2/fulfillment.api';
+import {
   fetchTiktokShippingDocumentUrl,
   FetchTiktokPrintOptions,
   TiktokPrintResult,
-} from './api/v2/fulfillment.api';
+} from './api/shipping-print.api';
 import {
   isTiktokOrderPrintable,
   TiktokPrintEligibilityCandidate,

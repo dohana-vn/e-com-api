@@ -3,18 +3,28 @@ import assert from 'node:assert/strict';
 import {
   NhanhModule,
   isNhanhOrderPrintable,
+  fetchNhanhShippingDocument,
   NHANH_ORDER_STATUS,
   NHANH_ORDER_SALE_CHANNEL,
   NHANH_ORDER_CARRIER,
 } from '../dist/app.js';
 
-test('NhanhModule exposes isOrderPrintable method', () => {
+test('NhanhModule exposes shipping document methods', () => {
   const client = new NhanhModule({
     appSecret: 'secret',
     returnLink: 'link',
     version: '2.0',
   });
   assert.equal(typeof client.isOrderPrintable, 'function');
+  assert.equal(typeof client.getShippingDocument, 'function');
+});
+
+test('fetchNhanhShippingDocument packages raw data for label rendering', async () => {
+  const res = await fetchNhanhShippingDocument({ id: 12345, carrierCode: 'GHN123' });
+  assert.equal(res.source, 'NHANH');
+  assert.equal(res.type, 'RAW_DATA');
+  assert.equal(res.orderData.id, 12345);
+  assert.match(res.message, /Nhanh\.vn Open API does not provide a direct print document endpoint/);
 });
 
 test('isNhanhOrderPrintable handles Nhanh.vn strategies', () => {

@@ -1,6 +1,7 @@
 export * from './api/authorization.api'
 export * from './dto'
 export * from './common/shipping-print.helper'
+export * from './api/shipping-print.api'
 export * from './api/logistic.api'
 export {
   SHOPEE_ORDER_STATUS,
@@ -43,11 +44,13 @@ import {
   getChannelList,
   shipOrder,
   shippingParameter,
+} from './api/logistic.api';
+import {
   fetchShopeeBatchShippingDocuments,
   ShopeePrintOrderInput,
   FetchShopeePrintOptions,
   ShopeeBatchPrintResult,
-} from './api/logistic.api';
+} from './api/shipping-print.api';
 import {
   isShopeeOrderPrintable,
   ShopeePrintEligibilityCandidate,
