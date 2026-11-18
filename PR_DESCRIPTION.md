@@ -1,77 +1,69 @@
-# 🚀 PR: Triển khai tính năng In phiếu vận chuyển theo cấu trúc Module đồng nhất (Shopee, TikTok, Nhanh.vn)
+# 🚀 PR: Triển khai E-commerce Bridge Services & MCP Server đa sàn (Nhanh.vn, Shopee, TikTok Shop)
 
 ## 📌 Tóm tắt ngắn gọn
-Pull Request này chuẩn hóa tính năng in phiếu vận chuyển (Shipping Label) theo kiến trúc **Module đồng nhất ("Same-Same")**:
-- **Không dùng Switch-Case tập trung**, xóa bỏ hoàn toàn thư mục `src/common/`.
-- **Cấu trúc song song 100% ở cả 3 sàn:** Mỗi sàn đều sở hữu đúng 1 cặp file:
-  * `api/shipping-print.api.ts`: Chuyên trách giao tiếp mạng, gọi API lấy file/URL in.
-  * `common/shipping-print.helper.ts`: Chuyên trách logic nghiệp vụ, lọc đơn rác, chia mẻ, gộp kiện.
-- **Phía Backend (BE chính):** Gọi hàm trực tiếp từ module của từng sàn (`ShopeeModule`, `TiktokModule`, `NhanhModule`).
+Pull Request này bổ sung tầng dịch vụ **Cầu nối đa sàn (E-commerce Bridge Services)** kết hợp cùng **Model Context Protocol (MCP) Server**.
+Tính năng này cho phép nhân viên kho, CSKH và các trợ lý AI (như Antigravity IDE) chỉ cần tiếp nhận câu lệnh chat tiếng Việt tự nhiên (ví dụ: *"Kiểm tra đơn Nhanh NH8899"*, *"In tem cho đơn NH8899"*) để tự động nhận diện sàn và thực thi trực tiếp các thao tác trên Shopee hoặc TikTok Shop mà không cần mở cùng lúc 3 màn hình trình duyệt.
 
 ---
 
-## 🌳 Cây thư mục đồng nhất ("Same-Same") giữa các sàn
+## 🌳 Kiến trúc Clean Architecture (Zero Redundancy - Không code trung gian)
+
+Mã nguồn được tổ chức theo chuẩn **Clean Architecture / Domain-Driven Design (DDD)** và **Modern OOP (Dependency Injection & Adapter Pattern)**:
 
 ```text
-src/module/
+src/module/bridge/
 │
-├── shopee/
-│   ├── api/shipping-print.api.ts          👈 API in mẻ Shopee (Batch print, Polling, Timeout, Hook S3)
-│   ├── common/shipping-print.helper.ts   👈 Helper Shopee (Lọc đơn, cắt mẻ 50, Magic Bytes)
-│   └── index.ts                           👈 ShopeeModule (.getBatchShippingDocuments, .isOrderPrintable)
+├── dto/                                  👈 Data Contracts (Types & Interfaces)
+│   ├── order.dto.ts                      (IdentifiedOrder, BridgeOrderDetailResult, BridgeOrderItem)
+│   ├── fulfillment.dto.ts                (BridgeShipOrderResult, BridgeShippingLabelResult, BridgeTrackingResult)
+│   └── index.ts
 │
-├── tiktokshops/
-│   ├── api/shipping-print.api.ts          👈 API in TikTok (Lấy URL nhãn in PDF/PNG/ZPL)
-│   ├── common/shipping-print.helper.ts   👈 Helper TikTok (Lọc đơn, gộp kiện chống in trùng)
-│   └── index.ts                           👈 TiktokModule (.getShippingDocumentUrl, .isOrderPrintable)
+├── services/                             👈 3 Domain Services chuyên biệt (Độc lập 100%)
+│   ├── order-identifier.service.ts       (Nhận diện mã Nhanh ➔ Trả về sàn Shopee/TikTok/Nhanh)
+│   ├── bridge-order.service.ts           (Chuyên mảng Order: Chi tiết món, giá tiền, địa chỉ)
+│   ├── bridge-fulfillment.service.ts     (Chuyên mảng Fulfillment: Ship hàng, In tem PDF A6, Tracking)
+│   └── index.ts
 │
-└── nhanh/
-    ├── api/shipping-print.api.ts          👈 API in Nhanh (Đóng gói RAW_DATA cho A6 thermal print)
-    ├── common/shipping-print.helper.ts   👈 Helper Nhanh (Lọc đơn, phân loại đơn sàn vs bán lẻ)
-    └── index.ts                           👈 NhanhModule (.getShippingDocument, .isOrderPrintable)
+└── index.ts                              👈 Public API export ra toàn dự án
 ```
 
 ---
 
-## 🛠️ Chi tiết các hàm trong từng module
+## 🛠️ Chi tiết các thành phần chính
 
-### 1. Sàn Shopee (`src/module/shopee/`)
-* **`api/shipping-print.api.ts`**:
-  * `fetchShopeeBatchShippingDocuments`: Quy trình in mẻ chuẩn Production: Gửi lệnh tạo mẻ ➔ Polling chờ render (bắt lỗi token dừng ngay) ➔ Tải file ➔ Quét Magic Bytes ➔ Gọi hook `uploadFile` (S3/MinIO nếu BE cấu hình).
-* **`common/shipping-print.helper.ts`**:
-  * `isShopeeOrderPrintable`: Kiểm tra điều kiện đơn Shopee được phép in (`PROCESSED`, `RETRY_SHIP`, có mã vận đơn).
-  * `chunkShopeePrintOrders`: Tự động gom theo Shop ID và cắt nhỏ mảng đơn thành các mẻ tối đa 50 đơn/lần (chuẩn Shopee Open API).
-  * `partitionShopeeDocumentResult`: Phân loại kết quả Shopee (`readyOrders`, `failedOrders`, `processingOrders`).
-  * `detectDownloadedDocumentFormat`: Quét mã nhị phân Magic Bytes (`%PDF`, `PK`, `^XA`) nhận diện file nhị phân.
-* **`ShopeeModule` Methods**:
-  * `shopee.getBatchShippingDocuments(orders, options)`
-  * `shopee.isOrderPrintable(order, allowReprint)`
+### 1. `OrderIdentifierService`
+- Làm sạch định dạng mã đơn Nhanh (hỗ trợ `"NH8899"`, `"nh 8899"`, hoặc `8899`).
+- Truy vấn Nhanh.vn API để bóc tách `saleChannel` và mã sàn gốc:
+  - `saleChannel = 42`: Đơn **Shopee** (lấy mã `order_sn` từ `channel.appOrderId`).
+  - `saleChannel = 48`: Đơn **TikTok Shop** (lấy `order_id` và mã kiện `carrier.packageCode`).
+  - Khác: Đơn bán lẻ nội bộ Nhanh.vn.
 
-### 2. Sàn TikTok Shop (`src/module/tiktokshops/`)
-* **`api/shipping-print.api.ts`**:
-  * `fetchTiktokShippingDocumentUrl`: Lấy link URL tải tem in theo `packageId` (hỗ trợ `PDF`, `PNG`, `ZPL`).
-* **`common/shipping-print.helper.ts`**:
-  * `isTiktokOrderPrintable`: Kiểm tra điều kiện in TikTok (`AWAITING_COLLECTION`, `PARTIALLY_SHIPPING`, loại trừ FBT).
-  * `dedupeTiktokPackages`: Lọc trùng kiện khi nhiều đơn gộp chung 1 kiện (`packageId`), đảm bảo máy in chỉ nhả ra **đúng 1 phiếu in**, chống lãng phí giấy.
-* **`TiktokModule` Methods**:
-  * `tiktok.getShippingDocumentUrl(packageId, options)`
-  * `tiktok.isOrderPrintable(order, allowReprint)`
+### 2. `BridgeOrderService`
+- Cung cấp hàm `getOrderDetailByNhanhId(nhanhOrderId)`.
+- Đóng vai trò **Adapter**: Chuẩn hóa dữ liệu trả về khác nhau giữa Shopee (`item_list`, `model_quantity_purchased`) và TikTok (`line_items`, `quantity`) về format chuẩn thống nhất `BridgeOrderDetailResult` cho AI.
 
-### 3. Sàn Nhanh.vn (`src/module/nhanh/`)
-* **`api/shipping-print.api.ts`**:
-  * `fetchNhanhShippingDocument`: Đóng gói dữ liệu đơn hàng dạng `RAW_DATA` để BE đưa vào template in nhiệt A6/A5.
-* **`common/shipping-print.helper.ts`**:
-  * `isNhanhOrderPrintable`: Kiểm tra trạng thái đơn Nhanh và mã vận đơn `carrierCode`. Phân luồng đơn sàn (uỷ quyền in qua Shopee/TikTok) vs đơn bán lẻ (in khổ A6).
-* **`NhanhModule` Methods**:
-  * `nhanh.getShippingDocument(orderData)`
-  * `nhanh.isOrderPrintable(order, options)`
+### 3. `BridgeFulfillmentService`
+- `shipOrderByNhanhId(nhanhOrderId)`: Bắn lệnh xác nhận chuẩn bị hàng lên Shopee/TikTok để shipper qua lấy.
+- `getShippingLabelByNhanhId(nhanhOrderId)`: Tận dụng trực tiếp module In ấn từ PR trước, trả về link PDF tem in khổ A6 chính hãng sàn.
+- `getTrackingInfoByNhanhId(nhanhOrderId)`: Tra cứu mã vận đơn (SPX, J&T...) và trạng thái giao hàng thực tế.
+
+### 4. `MCP Server (mcp_server.js)`
+- Đăng ký 4 công cụ chuẩn hóa cho AI:
+  1. `ecom_get_order_detail`: Tra cứu chi tiết sản phẩm, giá tiền, địa chỉ từ mã đơn Nhanh.
+  2. `ecom_ship_order`: Bắn lệnh ship đơn hàng lên sàn.
+  3. `ecom_get_shipping_label`: Lấy link tải tem in PDF chuẩn.
+  4. `ecom_get_tracking_info`: Tra cứu hành trình vận chuyển.
+- Xử lý bất đồng bộ qua Stdio JSON-RPC 2.0. Bảo vệ tiến trình bằng `if (require.main === module)` giúp script có thể import độc lập để viết test.
 
 ---
 
 ## 🧪 Kết quả Kiểm thử (Unit Tests)
-Đã tổ chức lại bộ test độc lập tương ứng theo từng sàn tại thư mục `test/`:
-* `test/shopee-shipping-print.test.mjs`
-* `test/tiktok-shipping-print.test.mjs`
-* `test/nhanh-shipping-print.test.mjs`
 
-👉 **Toàn bộ 14/14 tests đều chạy thành công (PASS 100%).**
+Chạy kiểm thử toàn bộ dự án với:
+```bash
+npm test
+```
+
+👉 **Kết quả: 22/22 tests PASS (100%)**
+- 14 tests cũ của các module in ấn (Shopee, TikTok, Nhanh) giữ nguyên tính tương thích 100%.
+- 8 tests mới cho `OrderIdentifierService`, `BridgeOrderService`, `BridgeFulfillmentService` và `MCP Server Tool Handlers`.
