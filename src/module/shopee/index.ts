@@ -44,6 +44,7 @@ import {
   getChannelList,
   shipOrder,
   shippingParameter,
+  getTrackingNumber,
 } from './api/logistic.api';
 import {
   fetchShopeeBatchShippingDocuments,
@@ -180,6 +181,10 @@ export class ShopeeModule {
 
   async shipOrder(orderNumber: string, addressId: number, timeSlot: string): Promise<ShopeeResponseShipOrder> {
     return await shipOrder(orderNumber, addressId, timeSlot, this.config);
+  }
+
+  async getTrackingNumber(orderNumber: string): Promise<any> {
+    return await getTrackingNumber(orderNumber, this.config);
   }
 
   async getShippingDocumentParameter(
