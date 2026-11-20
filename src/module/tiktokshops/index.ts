@@ -1,4 +1,28 @@
 import { searchReturns, searchReturnsByUpdateTime } from './api/v2/return-refund.api';
+import {
+  getOrderStatementTransactions,
+  getPayments,
+  getStatements,
+  getStatementTransactions,
+  getUnsettledTransactions,
+  getWithdrawals,
+} from './api/v2/finance.api';
+import {
+  TiktokGetOrderStatementTransactionsParams,
+  TiktokGetPaymentsParams,
+  TiktokGetStatementsParams,
+  TiktokGetStatementTransactionsParams,
+  TiktokGetUnsettledTransactionsParams,
+  TiktokGetWithdrawalsParams,
+} from './dto/request/finance.request';
+import {
+  TiktokFinanceResponse,
+  TiktokPaymentListData,
+  TiktokStatementListData,
+  TiktokStatementTransactionListData,
+  TiktokUnsettledTransactionListData,
+  TiktokWithdrawalListData,
+} from './dto/response/finance.response';
 
 export * from './api/v2/authorization.api'
 export * from './dto/response'
@@ -155,5 +179,41 @@ export class TiktokModule {
 
   async getOrderByCreateTimeRange(timeFrom: number, timeTo: number, params: { page_size: number; page_token?: string }): Promise<any> {
     return await getOrdersByCreateTimeRange(timeFrom, timeTo, params, this.config);
+  }
+
+  async getStatements(
+    params: TiktokGetStatementsParams,
+  ): Promise<TiktokFinanceResponse<TiktokStatementListData>> {
+    return await getStatements(params, this.config);
+  }
+
+  async getStatementTransactions(
+    params: TiktokGetStatementTransactionsParams,
+  ): Promise<TiktokFinanceResponse<TiktokStatementTransactionListData>> {
+    return await getStatementTransactions(params, this.config);
+  }
+
+  async getOrderStatementTransactions(
+    params: TiktokGetOrderStatementTransactionsParams,
+  ): Promise<TiktokFinanceResponse<TiktokStatementTransactionListData>> {
+    return await getOrderStatementTransactions(params, this.config);
+  }
+
+  async getPayments(
+    params: TiktokGetPaymentsParams,
+  ): Promise<TiktokFinanceResponse<TiktokPaymentListData>> {
+    return await getPayments(params, this.config);
+  }
+
+  async getWithdrawals(
+    params: TiktokGetWithdrawalsParams,
+  ): Promise<TiktokFinanceResponse<TiktokWithdrawalListData>> {
+    return await getWithdrawals(params, this.config);
+  }
+
+  async getUnsettledTransactions(
+    params: TiktokGetUnsettledTransactionsParams,
+  ): Promise<TiktokFinanceResponse<TiktokUnsettledTransactionListData>> {
+    return await getUnsettledTransactions(params, this.config);
   }
 }

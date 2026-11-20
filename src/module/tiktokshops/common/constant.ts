@@ -125,6 +125,15 @@ enum PATH_202502 {
   FETCH_TOKEN = '/v2/oauth/token',
 }
 
+enum PATH_FINANCE {
+  STATEMENTS = '/finance/202309/statements',
+  STATEMENT_TRANSACTIONS = '/finance/202501/statements/{statement_id}/statement_transactions',
+  ORDER_STATEMENT_TRANSACTIONS = '/finance/202501/orders/{order_id}/statement_transactions',
+  PAYMENTS = '/finance/202605/payments',
+  WITHDRAWALS = '/finance/202309/withdrawals',
+  UNSETTLED_TRANSACTIONS = '/finance/202507/unsettled_transactions',
+}
+
 enum DOCUMENT_TYPE {
   PACKING_SLIP = 'PACKING_SLIP', //PDF
   SHIPPING_LABEL = 'SHIPPING_LABEL', //PDF
@@ -153,6 +162,7 @@ export {
   PATH as TIKTOK_PATH,
   PATH_202309 as TIKTOK_PATH_202309,
   PATH_202502 as TIKTOK_PATH_202502,
+  PATH_FINANCE as TIKTOK_PATH_FINANCE,
   PATH_PLACEHOLDER as TIKTOK_PATH_PLACEHOLDER,
   DOCUMENT_TYPE as TIKTOK_DOCUMENT_TYPE,
   CODE as TIKTOK_CODE,

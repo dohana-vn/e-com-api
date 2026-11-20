@@ -76,6 +76,17 @@ import {
   uploadReturnProof,
 } from './api/return-refund.api';
 import {
+  generateIncomeReport,
+  getEscrowDetail,
+  getEscrowDetailBatch,
+  getEscrowList,
+  getIncomeDetail,
+  getIncomeOverview,
+  getIncomeReport,
+  getPayoutInfo,
+  getWalletTransactionList,
+} from './api/payment.api';
+import {
   fetchTokenWithAuthCode,
   fetchTokenWithRefreshToken,
   getShopInfo,
@@ -101,6 +112,24 @@ import {
   ShopeeResponseShopInfo,
   ShopeeResponseShopProfile,
   ShopeeResponseUploadReturnProof,
+  ShopeeGetEscrowDetailRequest,
+  ShopeeGetEscrowDetailBatchRequest,
+  ShopeeGetEscrowListRequest,
+  ShopeeGetIncomeOverviewRequest,
+  ShopeeGetIncomeDetailRequest,
+  ShopeeGenerateIncomeReportRequest,
+  ShopeeGetIncomeReportRequest,
+  ShopeeGetWalletTransactionListRequest,
+  ShopeeGetPayoutInfoRequest,
+  ShopeeResponseGetEscrowDetail,
+  ShopeeResponseGetEscrowDetailBatch,
+  ShopeeResponseGetEscrowList,
+  ShopeeResponseGetIncomeOverview,
+  ShopeeResponseGetIncomeDetail,
+  ShopeeResponseGenerateIncomeReport,
+  ShopeeResponseGetIncomeReport,
+  ShopeeResponseGetWalletTransactionList,
+  ShopeeResponseGetPayoutInfo,
 } from './dto';
 
 export class ShopeeModule {
@@ -272,5 +301,59 @@ export class ShopeeModule {
     params: ShopeeDisputeReturnRequest,
   ): Promise<ShopeeResponseDisputeReturn> {
     return await disputeReturn(this.config, params);
+  }
+
+  async getEscrowDetail(
+    params: ShopeeGetEscrowDetailRequest,
+  ): Promise<ShopeeResponseGetEscrowDetail> {
+    return await getEscrowDetail(params, this.config);
+  }
+
+  async getEscrowDetailBatch(
+    params: ShopeeGetEscrowDetailBatchRequest,
+  ): Promise<ShopeeResponseGetEscrowDetailBatch> {
+    return await getEscrowDetailBatch(params, this.config);
+  }
+
+  async getEscrowList(
+    params: ShopeeGetEscrowListRequest,
+  ): Promise<ShopeeResponseGetEscrowList> {
+    return await getEscrowList(params, this.config);
+  }
+
+  async getIncomeOverview(
+    params: ShopeeGetIncomeOverviewRequest = {},
+  ): Promise<ShopeeResponseGetIncomeOverview> {
+    return await getIncomeOverview(params, this.config);
+  }
+
+  async getIncomeDetail(
+    params: ShopeeGetIncomeDetailRequest,
+  ): Promise<ShopeeResponseGetIncomeDetail> {
+    return await getIncomeDetail(params, this.config);
+  }
+
+  async generateIncomeReport(
+    params: ShopeeGenerateIncomeReportRequest,
+  ): Promise<ShopeeResponseGenerateIncomeReport> {
+    return await generateIncomeReport(params, this.config);
+  }
+
+  async getIncomeReport(
+    params: ShopeeGetIncomeReportRequest,
+  ): Promise<ShopeeResponseGetIncomeReport> {
+    return await getIncomeReport(params, this.config);
+  }
+
+  async getWalletTransactionList(
+    params: ShopeeGetWalletTransactionListRequest,
+  ): Promise<ShopeeResponseGetWalletTransactionList> {
+    return await getWalletTransactionList(params, this.config);
+  }
+
+  async getPayoutInfo(
+    params: ShopeeGetPayoutInfoRequest,
+  ): Promise<ShopeeResponseGetPayoutInfo> {
+    return await getPayoutInfo(params, this.config);
   }
 }
